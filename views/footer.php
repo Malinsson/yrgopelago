@@ -1,8 +1,8 @@
-    <script src="./app/app.js"></script>
+<footer>
+    <p>&copy; 2024 Yrgopelago</p>
+</footer>
 
-    <footer>
-        <p>&copy; 2024 Yrgopelago</p>
-    </footer>
-    </body>
+<script src="./app/app.js"></script>
+</body>
 
-    </html>
+</html>

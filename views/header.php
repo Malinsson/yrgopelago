@@ -1,4 +1,7 @@
 <?php
+session_start();
+
+require 'vendor/autoload.php';
 
 ?>
 
@@ -10,6 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yrgopelago</title>
     <link rel="stylesheet" href="./app/app.css">
+    <link rel="stylesheet" type="text/css" href="css/calendar.min.css">
 </head>
 
 <body>
