@@ -3,39 +3,11 @@
 }
 
 .calendar {
-    background: #2CA8C2;
-    color: #FFF;
-    width: 100%;
+    background: #dfe4e6;
+    color: #000000;
+    width: 50%;
     font-family: 'Oxygen';
     table-layout: fixed;
-}
-
-.calendar.purple {
-    background: #913CCD;
-}
-
-.calendar.pink {
-    background: #F15F74;
-}
-
-.calendar.orange {
-    background: #F76D3C;
-}
-
-.calendar.yellow {
-    background: #F7D842;
-}
-
-.calendar.green {
-    background: #98CB4A;
-}
-
-.calendar.grey {
-    background: #839098;
-}
-
-.calendar.blue {
-    background: #5481E6;
 }
 
 .calendar-title th {
