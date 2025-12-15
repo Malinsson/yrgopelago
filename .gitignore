@@ -1,3 +1,4 @@
 .env
 vendor
 hotel.db
+admin.php
