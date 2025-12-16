@@ -24,4 +24,9 @@ function displayFeaturesCheckboxes(): void
 
         </fieldset>
 <?php }
-}
+};
+
+function clean(string $data): string
+{
+    return htmlspecialchars(stripslashes(trim($data)));
+};
