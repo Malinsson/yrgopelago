@@ -8,18 +8,23 @@ if (isset($_POST['name'], $_POST['transfer-code'], $_POST['room-type'], $_POST['
     $roomType = htmlspecialchars($_POST['room-type']);
     $arrivalDate = htmlspecialchars($_POST['arrival-date']);
     $departureDate = htmlspecialchars($_POST['departure-date']);
+    $features = $_POST['features'] ?? []; ?>
 
-    // Here you would typically process the booking, e.g., save to a database
-    // For demonstration, we'll just display a confirmation message
+    <h2>Booking Confirmation</h2>
+    <p>Thank you, <?= $name ?>, for your booking!</p>
+    <p>Transfer Code: <?= $transferCode ?></p>
+    <p>Room Type: <?= $roomType ?></p>
+    <p>Arrival Date: <?= $arrivalDate ?></p>
+    <p>Departure Date: <?= $departureDate ?></p>
+    <p>Selected Features:</p>
+    <ul>
+        <?php foreach ($features as $category => $tiers) {
+            foreach ($tiers as $tier) { ?>
+                <li><?= htmlspecialchars(ucfirst($category)) ?> - <?= htmlspecialchars(ucfirst($tier)) ?></li>
+        <?php }
+        } ?>
+    <?php } else { ?>
+        <p>Error: All fields are required.</p>
+    <?php } ?>
 
-    echo "<h2>Booking Confirmation</h2>";
-    echo "<p>Thank you, $name, for your booking!</p>";
-    echo "<p>Transfer Code: $transferCode</p>";
-    echo "<p>Room Type: $roomType</p>";
-    echo "<p>Arrival Date: $arrivalDate</p>";
-    echo "<p>Departure Date: $departureDate</p>";
-} else {
-    echo "<p>Error: All fields are required.</p>";
-}
-?>
-<button onclick="window.history.back();">Go Back</button>
+    <button onclick="window.history.back();">Go Back</button>
