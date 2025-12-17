@@ -11,6 +11,5 @@ if (isset($_POST['name'], $_POST['transfer-code'], $_POST['room-type'], $_POST['
     $roomType = clean($_POST['room-type']);
     $arrivalDate = clean($_POST['arrival-date']);
     $departureDate = clean($_POST['departure-date']);
-    $features = $_POST['features'] ?? []; ?>
-
-   
+    $features = $_POST['features'] ?? [];
+}

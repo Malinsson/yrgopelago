@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/functions.php';
+
 ?>
 
 <form method="post" action="process-booking.php">
@@ -23,7 +24,6 @@ require_once __DIR__ . '/functions.php';
     <label for="departure-date">Select departure date:</label>
     <input type="date" id="departure-date" name="departure-date" required>
 
-    <?php displayFeaturesCheckboxes(); ?>
 
     <button type="submit">Book Now</button>
 </form>
