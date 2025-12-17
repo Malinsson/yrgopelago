@@ -14,8 +14,32 @@ if (isset($_POST['name'], $_POST['transfer-code'], $_POST['room-type'], $_POST['
     $features = $_POST['features'] ?? [];
     $featuresSerialized = serialize($features);
 
-    if ($roomType === '') {
-        $roomType = null;
-    } else {
-    }
-}
+    $guests = searchAllGuests($database);
+    $previousGuests = array_column($guests, "name");
+    if (!in_array($name, $previousGuests)) {
+        $insertGuest = $database->prepare("INSERT INTO guests (name) VALUES (:name)");
+        $insertGuest->bindParam(':name', $name);
+        $insertGuest->execute();
+    } else { ?>
+        <p> Welcome back, <?= ($name) ?>!</p>
+    <?php }
+
+
+    ?>
+    <p>Booking successful! Here are your details:</p>
+    <ul>
+        <li>Name: <?= $name ?></li>
+        <li>Transfer Code: <?= $transferCode ?></li>
+        <li>Room Type: <?= $roomType ?></li>
+        <li>Arrival Date: <?= $arrivalDate ?></li>
+        <li>Departure Date: <?= $departureDate ?></li>
+        <li>Selected Features:
+            <ul>
+                <?php foreach ($features as $feature): ?>
+                    <li><?= toUppercase($feature) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </li>
+    </ul>
+    <button onclick="window.location.href='index.php'">Make another booking</button>
+<?php }

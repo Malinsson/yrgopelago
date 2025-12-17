@@ -3,6 +3,7 @@ session_start();
 
 require 'vendor/autoload.php';
 
+
 use Dotenv\Dotenv;
 
 try {
@@ -10,8 +11,7 @@ try {
     $dotenv->load();
 } catch (Exception $e) {
     error_log('Dotenv error: ' . $e->getMessage());
-}
-?>
+} ?>
 
 <!DOCTYPE html>
 <html lang="en">

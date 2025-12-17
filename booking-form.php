@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/features.php';
+require_once __DIR__ . '/app/database/database.php';
 
 ?>
 
@@ -18,6 +19,8 @@ require_once __DIR__ . '/features.php';
         <option value="luxury">Luxury</option>
         <option value="null">No room</option>
     </select>
+
+
 
     <label for="arrival-date">Select arrival date:</label>
     <input type="date" id="arrival-date" name="arrival-date" min="2026-01-01" max="2026-01-31" required>
