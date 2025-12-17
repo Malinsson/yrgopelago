@@ -10,7 +10,7 @@ function displayFeaturesCheckboxes(array $featureGrid): void
         $tier = toUppercase($feature['tier']);
         $featureName = toUppercase($feature['feature']);
         $price = $feature['base_price'] ?>
-        <input type="checkbox" name="<?= $tier ?>" value="<?= $featureName ?>"></input>
+        <input type="checkbox" name="features[]" value="<?= $featureName ?>"></input>
         <label for="<?= $featureName ?>"> <?= $featureName ?> Cost: <?= $price ?>$</label>
 <?php }
 }
