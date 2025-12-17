@@ -13,4 +13,9 @@ if (isset($_POST['name'], $_POST['transfer-code'], $_POST['room-type'], $_POST['
     $departureDate = clean($_POST['departure-date']);
     $features = $_POST['features'] ?? [];
     $featuresSerialized = serialize($features);
+
+    if ($roomType === '') {
+        $roomType = null;
+    } else {
+    }
 }
