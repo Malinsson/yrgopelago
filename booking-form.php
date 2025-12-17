@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/functions.php';
+require_once __DIR__ . '/features.php';
 
 ?>
 
@@ -23,6 +24,8 @@ require_once __DIR__ . '/functions.php';
 
     <label for="departure-date">Select departure date:</label>
     <input type="date" id="departure-date" name="departure-date" required>
+
+    <?php displayFeaturesCheckboxes($featureGrid); ?>
 
 
     <button type="submit">Book Now</button>
