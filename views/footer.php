@@ -3,6 +3,7 @@
 </footer>
 
 <script src="./app/app.js"></script>
+<script src="./app/api/api.js"></script>
 </body>
 
 </html>

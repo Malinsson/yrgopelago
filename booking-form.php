@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/functions.php';
+require_once __DIR__ . '/features.php';
+
 ?>
 
 <form method="post" action="process-booking.php">
@@ -18,12 +20,15 @@ require_once __DIR__ . '/functions.php';
     </select>
 
     <label for="arrival-date">Select arrival date:</label>
-    <input type="date" id="arrival-date" name="arrival-date" required>
+    <input type="date" id="arrival-date" name="arrival-date" min="2026-01-01" max="2026-01-31" required>
 
     <label for="departure-date">Select departure date:</label>
-    <input type="date" id="departure-date" name="departure-date" required>
+    <input type="date" id="departure-date" name="departure-date" min="2026-01-02" max="2026-02-01" required>
 
-    <?php displayFeaturesCheckboxes(); ?>
+    <fieldset>
+        <legend>Select Features:</legend>
+        <?php displayFeaturesCheckboxes($featureGrid); ?>
+    </fieldset>
 
     <button type="submit">Book Now</button>
 </form>

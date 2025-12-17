@@ -3,25 +3,24 @@
 declare(strict_types=1);
 require_once __DIR__ . '/features.php';
 
-function displayFeaturesCheckboxes(): void
+function displayFeaturesCheckboxes(array $featureGrid): void
 {
-    global $featureGrid;
-
-    foreach ($featureGrid as $category => $features) { ?>
-        <fieldset>
-            <legend> <?= htmlspecialchars(ucfirst($category)) ?> features:</legend>
-
-            <?php foreach ($features as $tier => $feature) {
-                $checkboxId = htmlspecialchars($category . '-' . $tier);
-                $checkboxName = 'features[' . htmlspecialchars($category) . '][]';
-                $checkboxValue = htmlspecialchars($tier); ?>
-
-                <div>
-                    <input type="checkbox" id="<?= $checkboxId ?>" name="<?= $checkboxName ?>" value="<?= $checkboxValue ?>">
-                    <label for="<?= $checkboxId ?>"><?= htmlspecialchars(ucfirst($feature)) ?></label>
-                </div>
-            <?php } ?>
-
-        </fieldset>
+    foreach ($featureGrid as $index => $feature) {
+        $category = toUppercase($feature['category']);
+        $tier = toUppercase($feature['tier']);
+        $featureName = toUppercase($feature['feature']);
+        $price = $feature['base_price'] ?>
+        <input type="checkbox" name="features[]" value="<?= $featureName ?>"></input>
+        <label for="<?= $featureName ?>"> <?= $featureName ?> Cost: <?= $price ?>$</label>
 <?php }
+}
+
+function clean(string $data): string
+{
+    return htmlspecialchars(stripslashes(trim($data)));
+};
+
+function toUppercase(string $data): string
+{
+    return ucfirst($data);
 }

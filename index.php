@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/views/header.php';
 ?>
 
@@ -7,6 +8,7 @@ require_once __DIR__ . '/views/header.php';
     <?php
     require_once __DIR__ . '/calendar.php';
     require_once __DIR__ . '/booking-form.php';
+
     ?>
 </main>
 
