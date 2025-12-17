@@ -20,10 +20,10 @@ require_once __DIR__ . '/features.php';
     </select>
 
     <label for="arrival-date">Select arrival date:</label>
-    <input type="date" id="arrival-date" name="arrival-date" required>
+    <input type="date" id="arrival-date" name="arrival-date" min="2026-01-01" max="2026-01-31" required>
 
     <label for="departure-date">Select departure date:</label>
-    <input type="date" id="departure-date" name="departure-date" required>
+    <input type="date" id="departure-date" name="departure-date" min="2026-01-02" max="2026-02-01" required>
 
     <fieldset>
         <legend>Select Features:</legend>
