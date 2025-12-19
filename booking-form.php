@@ -20,13 +20,11 @@ require_once __DIR__ . '/app/database/database.php';
         <option value="null">No room</option>
     </select>
 
-
-
     <label for="arrival-date">Select arrival date:</label>
     <input type="date" id="arrival-date" name="arrival-date" min="2026-01-01" max="2026-01-31" required>
 
     <label for="departure-date">Select departure date:</label>
-    <input type="date" id="departure-date" name="departure-date" min="2026-01-02" max="2026-02-01" required>
+    <input type="date" id="departure-date" name="departure-date" min="2026-01-02" max="2026-01-31" required>
 
     <fieldset>
         <legend>Select Features:</legend>
@@ -35,3 +33,23 @@ require_once __DIR__ . '/app/database/database.php';
 
     <button type="submit">Book Now</button>
 </form>
+
+<script>
+    const arrivalDateInput = document.getElementById('arrival-date');
+    const departureDateInput = document.getElementById('departure-date');
+
+    arrivalDateInput.addEventListener('change', function() {
+        if (this.value) {
+            // Set departure date to the day after arrival
+            const arrivalDate = new Date(this.value);
+            arrivalDate.setDate(arrivalDate.getDate() + 1);
+            const minDepartureDate = arrivalDate.toISOString().split('T')[0];
+            departureDateInput.min = minDepartureDate;
+
+            // If departure date is before arrival date, reset it
+            if (departureDateInput.value && departureDateInput.value <= this.value) {
+                departureDateInput.value = minDepartureDate;
+            }
+        }
+    });
+</script>
