@@ -14,16 +14,29 @@ if (isset($_POST['name'], $_POST['transfer-code'], $_POST['room-type'], $_POST['
     $features = $_POST['features'] ?? [];
     $featuresSerialized = serialize($features);
 
+    if ($roomType !== "null") {
+        if (!roomAvailability($database, $roomType, $arrivalDate, $departureDate)) { ?>
+            <p>Sorry, the selected room type is not available for the chosen dates. Please go back and select different dates or room type.</p>
+            <button onclick="window.location.href='index.php'">Go Back</button>
+    <?php exit();
+        }
+    }
+
     $guests = searchAllGuests($database);
     $previousGuests = array_column($guests, "name");
+
     if (!in_array($name, $previousGuests)) {
         $insertGuest = $database->prepare("INSERT INTO guests (name) VALUES (:name)");
         $insertGuest->bindParam(':name', $name);
         $insertGuest->execute();
-    } else { ?>
-        <p> Welcome back, <?= ($name) ?>!</p>
-    <?php }
+    }
 
+    $returningGuest = $database->prepare("SELECT id FROM guests WHERE name = :name");
+    $returningGuest->bindParam(':name', $name);
+    $returningGuest->execute();
+    $guestData = $returningGuest->fetch(PDO::FETCH_ASSOC);
+    $guestId = $guestData['id'];
+    insertReservation($database, $guestId, $roomType, $arrivalDate, $departureDate, $featuresSerialized);
 
     ?>
     <p>Booking successful! Here are your details:</p>
