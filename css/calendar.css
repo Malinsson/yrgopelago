@@ -94,6 +94,16 @@
     display: block;
 }
 
+.calendar-selected {
+    background-color: green !important;
+    color: white !important;
+}
+
+.calendar-departure {
+    background-color: #ff9800 !important;
+    color: white !important;
+}
+
 @media screen and (max-width:768px) {
     .weekly-calendar-container {
         display: block;

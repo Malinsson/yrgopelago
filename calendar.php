@@ -14,13 +14,6 @@ try {
         <?php echo $calendar->draw(date('2026-01-01')); ?>
     </div>
 
-    <style>
-        .calendar-selected {
-            background-color: green !important;
-            color: white !important;
-        }
-    </style>
-
     <!-- JavaScript to handle date selection via clicking on calendar days -->
 
     <script>
@@ -35,12 +28,55 @@ try {
 
             const dayCells = calendarContainer.querySelectorAll('td, div[class*="day"]');
 
+            function clearHighlights() {
+                dayCells.forEach(c => {
+                    c.classList.remove('calendar-selected');
+                    c.classList.remove('calendar-departure');
+                });
+            }
+
+            function highlightFromInputs(arrivalStr, departureStr) {
+                clearHighlights();
+
+                const parseYMD = (str) => {
+                    if (!str) return null;
+                    const parts = str.split('-').map(Number);
+                    if (parts.length !== 3) return null;
+                    return {
+                        y: parts[0],
+                        m: parts[1],
+                        d: parts[2]
+                    };
+                };
+
+                const arrival = parseYMD(arrivalStr);
+                const departure = parseYMD(departureStr);
+
+                if (arrival && arrival.y === 2026 && arrival.m === 1) {
+                    dayCells.forEach(c => {
+                        const cellDay = parseInt(c.textContent.trim(), 10);
+                        if (!isNaN(cellDay) && cellDay === arrival.d) {
+                            c.classList.add('calendar-selected');
+                        }
+                    });
+                }
+
+                if (departure && departure.y === 2026 && departure.m === 1) {
+                    dayCells.forEach(c => {
+                        const cellDay = parseInt(c.textContent.trim(), 10);
+                        if (!isNaN(cellDay) && cellDay === departure.d) {
+                            c.classList.add('calendar-departure');
+                        }
+                    });
+                }
+            }
+
             dayCells.forEach(cell => {
                 const dayText = cell.textContent.trim();
                 if (dayText && !isNaN(dayText) && parseInt(dayText) > 0 && parseInt(dayText) <= 31) {
                     cell.style.cursor = 'pointer';
                     cell.addEventListener('click', function(e) {
-                        dayCells.forEach(c => c.classList.remove('calendar-selected'));
+                        clearHighlights();
 
                         this.classList.add('calendar-selected');
 
@@ -54,12 +90,26 @@ try {
                         arrivalInput.dispatchEvent(new Event('change'));
 
                         const nextDay = new Date(year, month - 1, day + 1);
-                        const nextDayStr = `${nextDay.getFullYear()}-${String(nextDay.getMonth() + 1).padStart(2, '0')}-${String(nextDay.getDate()).padStart(2, '0')}`;
+                        const nextDayDay = nextDay.getDate();
+                        const nextDayStr = `${nextDay.getFullYear()}-${String(nextDay.getMonth() + 1).padStart(2, '0')}-${String(nextDayDay).padStart(2, '0')}`;
                         departureInput.min = nextDayStr;
                         departureInput.value = nextDayStr;
+
+                        highlightFromInputs(arrivalInput.value, departureInput.value);
                     });
                 }
             });
+
+            // Sync highlights when arrival is changed via the form (not just calendar clicks)
+            arrivalInput.addEventListener('change', function() {
+                highlightFromInputs(arrivalInput.value, departureInput.value);
+            });
+            departureInput.addEventListener('change', function() {
+                highlightFromInputs(arrivalInput.value, departureInput.value);
+            });
+
+            // Initial highlight if inputs already have values
+            highlightFromInputs(arrivalInput.value, departureInput.value);
         });
     </script>
 <?php
