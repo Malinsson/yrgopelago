@@ -34,22 +34,29 @@ require_once __DIR__ . '/app/database/database.php';
     <button type="submit">Book Now</button>
 </form>
 
+
+<!-- JavaScript to sync departure date with arrival date -->
 <script>
     const arrivalDateInput = document.getElementById('arrival-date');
     const departureDateInput = document.getElementById('departure-date');
 
-    arrivalDateInput.addEventListener('change', function() {
-        if (this.value) {
-            // Set departure date to the day after arrival
-            const arrivalDate = new Date(this.value);
-            arrivalDate.setDate(arrivalDate.getDate() + 1);
-            const minDepartureDate = arrivalDate.toISOString().split('T')[0];
-            departureDateInput.min = minDepartureDate;
+    function syncDepartureWithArrival() {
+        if (!arrivalDateInput.value) return;
 
-            // If departure date is before arrival date, reset it
-            if (departureDateInput.value && departureDateInput.value <= this.value) {
-                departureDateInput.value = minDepartureDate;
-            }
+        const arrivalDate = new Date(arrivalDateInput.value);
+        arrivalDate.setDate(arrivalDate.getDate() + 1);
+
+        const minDepartureDate = `${arrivalDate.getFullYear()}-${String(arrivalDate.getMonth() + 1).padStart(2, '0')}-${String(arrivalDate.getDate()).padStart(2, '0')}`;
+        departureDateInput.min = minDepartureDate;
+
+        if (!departureDateInput.value || departureDateInput.value < minDepartureDate) {
+            departureDateInput.value = minDepartureDate;
         }
+    }
+
+    syncDepartureWithArrival();
+
+    arrivalDateInput.addEventListener('change', function() {
+        syncDepartureWithArrival();
     });
 </script>
