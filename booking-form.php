@@ -9,8 +9,8 @@ require_once __DIR__ . '/app/database/database.php';
     <label for="name">Name:</label>
     <input type="text" id="name" name="name" required>
 
-    <label for="transfer-code">Transfer-code:</label>
-    <input type="text" id="transfer-code" name="transfer-code" required>
+    <label for="api-key">Api-key:</label>
+    <input type="text" id="api-key" name="api-key" required>
 
     <label for="room-type">Select room type:</label>
     <select id="room-type" name="room-type" required>

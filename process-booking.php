@@ -22,21 +22,19 @@ if (isset($_POST['name'], $_POST['transfer-code'], $_POST['room-type'], $_POST['
         }
     }
 
-    $guests = searchAllGuests($database);
-    $previousGuests = array_column($guests, "name");
-
-    if (!in_array($name, $previousGuests)) {
+    // Returning guest check
+    if (returningGuest($database, $name)) {
+        echo "<p>Welcome back, " . toUppercase($name) . "!</p>";
+    } else {
         $insertGuest = $database->prepare("INSERT INTO guests (name) VALUES (:name)");
         $insertGuest->bindParam(':name', $name);
         $insertGuest->execute();
     }
 
-    $returningGuest = $database->prepare("SELECT id FROM guests WHERE name = :name");
-    $returningGuest->bindParam(':name', $name);
-    $returningGuest->execute();
-    $guestData = $returningGuest->fetch(PDO::FETCH_ASSOC);
-    $guestId = $guestData['id'];
-    insertReservation($database, $guestId, $roomType, $arrivalDate, $departureDate, $featuresSerialized);
+    $guestId = getGuestId($database, $name);
+    $roomId = getRoomId($database, $roomType);
+
+    insertReservation($database, $guestId, $roomId, $arrivalDate, $departureDate, $featuresSerialized);
 
     ?>
     <p>Booking successful! Here are your details:</p>

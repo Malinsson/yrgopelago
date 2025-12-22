@@ -28,7 +28,7 @@ function searchAllReservations(PDO $database): array
     return $reservations->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function insertReservation(PDO $database, string $guestId, string $roomType, string $arrivalDate, string $departureDate): void
+function insertReservation(PDO $database, int $guestId, int $roomType, string $arrivalDate, string $departureDate): void
 {
     $insertReservation = $database->prepare("INSERT INTO reservations (guest_id, room_id, arrival_date, departure_date) VALUES (:guest_id, :room_id, :arrival_date, :departure_date)");
     $insertReservation->bindParam(':guest_id', $guestId);
@@ -38,7 +38,7 @@ function insertReservation(PDO $database, string $guestId, string $roomType, str
     $insertReservation->execute();
 }
 
-function insertBookedFeatures(PDO $database, string $reservationId, string $feature): void
+function insertBookedFeatures(PDO $database, int $reservationId, string $feature): void
 {
     $insertFeatures = $database->prepare("INSERT INTO booked_features (reservation_id, features) VALUES (:reservation_id, :features)");
     $insertFeatures->bindParam(':reservation_id', $reservationId);
