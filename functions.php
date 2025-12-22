@@ -30,11 +30,15 @@ function getGuestId(PDO $database, string $name): int
     return (int)$guestData['id'];
 }
 
-function getRoomId(PDO $database, string $roomType): int
+function getRoomId(string $roomType): ?int
 {
-    $roomQuery = $database->prepare("SELECT id FROM rooms WHERE type = :type");
-    $roomQuery->bindParam(':type', $roomType);
-    $roomQuery->execute();
-    $roomData = $roomQuery->fetch(PDO::FETCH_ASSOC);
-    return (int)$roomData['id'];
+    if ($roomType === "budget") {
+        return 1;
+    } elseif ($roomType === "standard") {
+        return 2;
+    } elseif ($roomType === "luxury") {
+        return 3;
+    } else {
+        return null;
+    }
 }

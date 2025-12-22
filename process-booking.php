@@ -1,40 +1,97 @@
 <?php
 
 declare(strict_types=1);
-
+require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/app/database/database.php';
 
-if (isset($_POST['name'], $_POST['transfer-code'], $_POST['room-type'], $_POST['arrival-date'], $_POST['departure-date'], $_POST['features']) && $_POST['name'] !== '') {
+if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arrival-date'], $_POST['departure-date'], $_POST['features']) && $_POST['name'] !== '') {
     $name = clean($_POST['name']);
-    $transferCode = clean($_POST['transfer-code']);
+    $apiKey = clean($_POST['api-key']);
     $roomType = clean($_POST['room-type']);
     $arrivalDate = clean($_POST['arrival-date']);
     $departureDate = clean($_POST['departure-date']);
     $features = $_POST['features'] ?? [];
     $featuresSerialized = serialize($features);
+    $totalCost = 5; // Base cost
 
+    // Room availability check
     if ($roomType !== "null") {
         if (!roomAvailability($database, $roomType, $arrivalDate, $departureDate)) { ?>
             <p>Sorry, the selected room type is not available for the chosen dates. Please go back and select different dates or room type.</p>
             <button onclick="window.location.href='index.php'">Go Back</button>
-    <?php exit();
+        <?php exit();
         }
     }
 
-    // Returning guest check
-    if (returningGuest($database, $name)) {
-        echo "<p>Welcome back, " . toUppercase($name) . "!</p>";
-    } else {
-        $insertGuest = $database->prepare("INSERT INTO guests (name) VALUES (:name)");
-        $insertGuest->bindParam(':name', $name);
-        $insertGuest->execute();
+    // Transfer code validation
+    $client = new \GuzzleHttp\Client();
+
+    $getTransferCode = [
+        'form_params' => [
+            'user' => $name,
+            'api_key' => $apiKey,
+            'amount' => $totalCost,
+        ],
+    ];
+
+    try {
+        $response = $client->POST('https://www.yrgopelag.se/centralbank/withdraw', $getTransferCode);
+        $response = $response->getBody()->getContents();
+        $response = json_decode($response, true);
+    } catch (Exception $e) {
+        ?>
+        <p>There was an error processing your request. Please try again later.</p>
+        <p><?= $e->getMessage() ?></p>
+        <button onclick="window.location.href='index.php'">Go Back</button>
+        <?php
+        exit();
     }
 
-    $guestId = getGuestId($database, $name);
-    $roomId = getRoomId($database, $roomType);
 
-    insertReservation($database, $guestId, $roomId, $arrivalDate, $departureDate, $featuresSerialized);
+    if (isset($response['transferCode']) && $response['status'] === 'success') {
+        $transferCode = $response['transferCode'];
+
+        $depositMoney = [
+            'form_params' => [
+                'user' => 'Malin',
+                'uuid-string' => $transferCode,
+            ],
+        ];
+
+        try {
+            $depositResponse = $client->POST('https://www.yrgopelag.se/centralbank/deposit', $depositMoney);
+            $depositResponse = $depositResponse->getBody()->getContents();
+            $depositResponse = json_decode($depositResponse, true);
+        } catch (Exception $e) {
+        ?>
+            <p>There was an error processing your request. Please try again later.</p>
+            <p><?= $e->getMessage() ?></p>
+            <button onclick="window.location.href='index.php'">Go Back</button>
+    <?php exit();
+        }
+
+
+        // Returning guest check
+        if (returningGuest($database, $name)) {
+            echo "<p>Welcome back, " . toUppercase($name) . "!</p>";
+        } else {
+            $insertGuest = $database->prepare("INSERT INTO guests (name) VALUES (:name)");
+            $insertGuest->bindParam(':name', $name);
+            $insertGuest->execute();
+        }
+
+
+        $guestId = getGuestId($database, $name);
+        $roomId = getRoomId($roomType);
+
+
+        insertReservation($database, $guestId, $roomId, $arrivalDate, $departureDate);
+        $reservationId = (int)$database->lastInsertId();
+        foreach ($features as $feature) {
+            insertBookedFeatures($database, $reservationId, $feature);
+        }
+    }
 
     ?>
     <p>Booking successful! Here are your details:</p>
