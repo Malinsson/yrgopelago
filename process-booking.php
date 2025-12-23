@@ -5,7 +5,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/app/database/database.php';
 
-if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arrival-date'], $_POST['departure-date'], $_POST['features']) && $_POST['name'] !== '') {
+if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arrival-date'], $_POST['departure-date']) && $_POST['name'] !== '') {
     $name = clean($_POST['name']);
     $apiKey = clean($_POST['api-key']);
     $roomType = clean($_POST['room-type']);
@@ -13,7 +13,7 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
     $departureDate = clean($_POST['departure-date']);
     $features = $_POST['features'] ?? [];
     $featuresSerialized = serialize($features);
-    $totalCost = 5; // Base cost
+
 
     // Room availability check
     if ($roomType !== "null") {
@@ -24,7 +24,17 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
         }
     }
 
-    // Transfer code validation
+    // Calculate total cost
+    $totalFeaturesPrice = getFeaturePriceTotal($features, $featureGrid);
+
+    if ($roomType === "null") {
+        $totalRoomPrice = 0;
+    } else {
+        $totalRoomPrice = getRoomPrice($database, getRoomId($roomType)) * calculateDays($arrivalDate, $departureDate);
+    }
+    $totalCost = $totalFeaturesPrice + $totalRoomPrice;
+
+    // Transfer code generation
     $client = new \GuzzleHttp\Client();
 
     $getTransferCode = [
@@ -48,7 +58,7 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
         exit();
     }
 
-
+    // If transfer successful, proceed with booking
     if (isset($response['transferCode']) && $response['status'] === 'success') {
         $transferCode = $response['transferCode'];
 
@@ -91,6 +101,21 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
         foreach ($features as $feature) {
             insertBookedFeatures($database, $reservationId, $feature);
         }
+
+        $fuaturesUsed =
+
+            $recipt = [
+                'user' => 'Malin',
+                'api_key' => $_ENV['API_KEY'],
+                'guest_name' => $name,
+                'arrival_date' => $arrivalDate,
+                'departure_date' => $departureDate,
+                'features_used' => $featuresSerialized,
+                'star_rating' => 2,
+
+            ];
+
+        $recipt = json_encode($recipt);
     }
 
     ?>

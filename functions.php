@@ -42,3 +42,11 @@ function getRoomId(string $roomType): ?int
         return null;
     }
 }
+
+function calculateDays(string $arrivalDate, string $departureDate): int
+{
+    $arrival = new DateTime($arrivalDate);
+    $departure = new DateTime($departureDate);
+    $interval = $arrival->diff($departure);
+    return (int)$interval->format('%a');
+}
