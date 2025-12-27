@@ -71,7 +71,7 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
         $depositMoney = [
             'form_params' => [
                 'user' => 'Malin',
-                'uuid-string' => $transferCode,
+                'transferCode' => $transferCode,
             ],
         ];
 
