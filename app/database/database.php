@@ -60,9 +60,9 @@ function roomAvailability(PDO $database, string $roomType, string $arrivalDate, 
 
 function getRoomPrice(PDO $database, int $roomId): int
 {
-    $getPrice = $database->prepare("SELECT base_price FROM rooms WHERE id = :id");
+    $getPrice = $database->prepare("SELECT price_per_night FROM rooms WHERE id = :id");
     $getPrice->bindParam(':id', $roomId);
     $getPrice->execute();
     $priceData = $getPrice->fetch(PDO::FETCH_ASSOC);
-    return (int)$priceData['base_price'];
+    return (int)$priceData['price_per_night'];
 }

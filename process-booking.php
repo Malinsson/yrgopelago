@@ -11,8 +11,6 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
     $roomType = clean($_POST['room-type']);
     $arrivalDate = clean($_POST['arrival-date']);
     $departureDate = clean($_POST['departure-date']);
-    $features = $_POST['features'] ?? [];
-    $featuresSerialized = serialize($features);
 
 
     // Room availability check
@@ -24,8 +22,15 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
         }
     }
 
+
     // Calculate total cost
-    $totalFeaturesPrice = getFeaturePriceTotal($features, $featureGrid);
+    if (isset($_POST['features'])) {
+        $features = $_POST['features'];
+        $totalFeaturesPrice = getFeaturePriceTotal($features, $featureGrid);
+    } else {
+        $features = [];
+        $totalFeaturesPrice = 0;
+    }
 
     if ($roomType === "null") {
         $totalRoomPrice = 0;
@@ -33,6 +38,7 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
         $totalRoomPrice = getRoomPrice($database, getRoomId($roomType)) * calculateDays($arrivalDate, $departureDate);
     }
     $totalCost = $totalFeaturesPrice + $totalRoomPrice;
+
 
     // Transfer code generation
     $client = new \GuzzleHttp\Client();
@@ -78,7 +84,7 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
             <p>There was an error processing your request. Please try again later.</p>
             <p><?= $e->getMessage() ?></p>
             <button onclick="window.location.href='index.php'">Go Back</button>
-    <?php exit();
+        <?php exit();
         }
 
 
@@ -116,8 +122,24 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
             ];
 
         $recipt = json_encode($recipt);
-    }
 
+        try {
+            $client->POST('https://www.yrgopelag.se/centralbank/recipt', [
+                'body' => $recipt,
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                ],
+            ]);
+        } catch (Exception $e) {
+        ?>
+            <p>There was an error processing your request. Please try again later.</p>
+            <p><?= $e->getMessage() ?></p>
+            <button onclick="window.location.href='index.php'">Go Back</button>
+<?php
+            exit();
+        }
+    }
+    /*
     ?>
     <p>Booking successful! Here are your details:</p>
     <ul>
@@ -135,4 +157,5 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
         </li>
     </ul>
     <button onclick="window.location.href='index.php'">Make another booking</button>
-<?php }
+<?php */
+}
