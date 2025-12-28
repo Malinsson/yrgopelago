@@ -1,9 +1,17 @@
 <?php
 
 declare(strict_types=1);
+
+use Dotenv\Dotenv;
+
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/app/database/database.php';
+
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->safeLoad();
+
+$envApiKey = $_ENV['API_KEY'] ?? $_ENV['api_key'] ?? null;
 
 if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arrival-date'], $_POST['departure-date']) && $_POST['name'] !== '') {
     $name = clean($_POST['name']);
@@ -27,7 +35,6 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
     // Calculate total cost
     if (isset($_POST['features'])) {
         $features = $_POST['features'];
-        $features = serialize($features);
         // $totalFeaturesPrice = getFeaturePriceTotal($features, $featureGrid);
     } else {
         $features = [];
@@ -81,6 +88,7 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
         exit();
     }
 
+
     // If transfer successful, proceed with booking
     if (isset($response['transferCode']) && $response['status'] === 'success') {
         $transferCode = $response['transferCode'];
@@ -117,31 +125,33 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
 
         $featuresUsed = [
             ['activity' => 'hotel-specific', 'tier' => 'premium'],
-            ['activity' => 'water', 'tier' => 'premium'],
         ];
 
-        $recipt = [
+        $receipt = [
             'user' => 'Malin',
-            'api_key' => $_ENV['API_KEY'],
+            'api_key' => $envApiKey,
             'guest_name' => $name,
             'arrival_date' => $arrivalDate,
             'departure_date' => $departureDate,
             'features_used' => $featuresUsed,
             'star_rating' => 2,
-
         ];
 
-        var_dump($recipt);
-
-        $recipt = json_encode($recipt);
 
         try {
-            $client->POST('https://www.yrgopelag.se/centralbank/recipt', [
-                'body' => $recipt,
+            $reciptResponse = $client->POST('https://www.yrgopelag.se/centralbank/receipt', [
                 'headers' => [
                     'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
                 ],
+                'json' => $receipt,
             ]);
+            $reciptResponse = $reciptResponse->getBody()->getContents();
+            $reciptResponse = json_decode($reciptResponse, true);
+            print_r($reciptResponse) ?>
+            <p>Booking successful! Your receipt ID is: <?= $reciptResponse['receipt'] ?></p>
+        <?php
+
         } catch (Exception $e) {
         ?>
             <p>There was an error processing your request. Please try again later.</p>
@@ -150,7 +160,6 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
 <?php
             exit();
         }
-
 
         // Insert reservation into database
         insertReservation($database, $guestId, $roomId, $arrivalDate, $departureDate);
