@@ -11,6 +11,7 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
     $roomType = clean($_POST['room-type']);
     $arrivalDate = clean($_POST['arrival-date']);
     $departureDate = clean($_POST['departure-date']);
+    $returningGuest = false;
 
 
     // Room availability check
@@ -26,11 +27,13 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
     // Calculate total cost
     if (isset($_POST['features'])) {
         $features = $_POST['features'];
-        $totalFeaturesPrice = getFeaturePriceTotal($features, $featureGrid);
+        $features = serialize($features);
+        // $totalFeaturesPrice = getFeaturePriceTotal($features, $featureGrid);
     } else {
         $features = [];
         $totalFeaturesPrice = 0;
     }
+
 
     if ($roomType === "null") {
         $totalRoomPrice = 0;
@@ -38,6 +41,20 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
         $totalRoomPrice = getRoomPrice($database, getRoomId($roomType)) * calculateDays($arrivalDate, $departureDate);
     }
     $totalCost = $totalFeaturesPrice + $totalRoomPrice;
+
+    if ($totalCost <= 0) {
+        ?>
+        <p>The total cost of your booking is $0. Please select a room type or features to proceed with the booking.</p>
+        <button onclick="window.location.href='index.php'">Go Back</button>
+    <?php
+        exit();
+    }
+
+    // Returning guest discount
+    if (returningGuest($database, $name)) {
+        $returningGuest = true;
+        $totalCost -= 1;
+    }
 
 
     // Transfer code generation
@@ -56,7 +73,7 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
         $response = $response->getBody()->getContents();
         $response = json_decode($response, true);
     } catch (Exception $e) {
-        ?>
+    ?>
         <p>There was an error processing your request. Please try again later.</p>
         <p><?= $e->getMessage() ?></p>
         <button onclick="window.location.href='index.php'">Go Back</button>
@@ -88,38 +105,33 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
         }
 
 
-        // Returning guest check
-        if (returningGuest($database, $name)) {
-            echo "<p>Welcome back, " . toUppercase($name) . "!</p>";
-        } else {
+        // Insert guest if new guest
+        if (!$returningGuest) {
             $insertGuest = $database->prepare("INSERT INTO guests (name) VALUES (:name)");
             $insertGuest->bindParam(':name', $name);
             $insertGuest->execute();
         }
 
-
         $guestId = getGuestId($database, $name);
         $roomId = getRoomId($roomType);
 
+        $featuresUsed = [
+            ['activity' => 'hotel-specific', 'tier' => 'premium'],
+            ['activity' => 'water', 'tier' => 'premium'],
+        ];
 
-        insertReservation($database, $guestId, $roomId, $arrivalDate, $departureDate);
-        $reservationId = (int)$database->lastInsertId();
-        foreach ($features as $feature) {
-            insertBookedFeatures($database, $reservationId, $feature);
-        }
+        $recipt = [
+            'user' => 'Malin',
+            'api_key' => $_ENV['API_KEY'],
+            'guest_name' => $name,
+            'arrival_date' => $arrivalDate,
+            'departure_date' => $departureDate,
+            'features_used' => $featuresUsed,
+            'star_rating' => 2,
 
-        $fuaturesUsed =
+        ];
 
-            $recipt = [
-                'user' => 'Malin',
-                'api_key' => $_ENV['API_KEY'],
-                'guest_name' => $name,
-                'arrival_date' => $arrivalDate,
-                'departure_date' => $departureDate,
-                'features_used' => $featuresSerialized,
-                'star_rating' => 2,
-
-            ];
+        var_dump($recipt);
 
         $recipt = json_encode($recipt);
 
@@ -138,24 +150,14 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
 <?php
             exit();
         }
+
+
+        // Insert reservation into database
+        insertReservation($database, $guestId, $roomId, $arrivalDate, $departureDate);
+        $reservationId = (int)$database->lastInsertId();
+
+        foreach ($features as $feature) {
+            insertBookedFeatures($database, $reservationId, $feature);
+        }
     }
-    /*
-    ?>
-    <p>Booking successful! Here are your details:</p>
-    <ul>
-        <li>Name: <?= $name ?></li>
-        <li>Transfer Code: <?= $transferCode ?></li>
-        <li>Room Type: <?= $roomType ?></li>
-        <li>Arrival Date: <?= $arrivalDate ?></li>
-        <li>Departure Date: <?= $departureDate ?></li>
-        <li>Selected Features:
-            <ul>
-                <?php foreach ($features as $feature): ?>
-                    <li><?= toUppercase($feature) ?></li>
-                <?php endforeach; ?>
-            </ul>
-        </li>
-    </ul>
-    <button onclick="window.location.href='index.php'">Make another booking</button>
-<?php */
 }
