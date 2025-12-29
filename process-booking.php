@@ -13,6 +13,8 @@ $dotenv->safeLoad();
 
 $envApiKey = $_ENV['API_KEY'] ?? $_ENV['api_key'] ?? null;
 
+
+
 if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arrival-date'], $_POST['departure-date']) && $_POST['name'] !== '') {
     $name = clean($_POST['name']);
     $apiKey = clean($_POST['api-key']);
@@ -20,11 +22,11 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
     $arrivalDate = clean($_POST['arrival-date']);
     $departureDate = clean($_POST['departure-date']);
     $returningGuest = false;
-
+    $roomId = getRoomId($roomType);
 
     // Room availability check
     if ($roomType !== "null") {
-        if (!roomAvailability($database, $roomType, $arrivalDate, $departureDate)) { ?>
+        if (!roomAvailability($database, $roomId, $arrivalDate, $departureDate)) { ?>
             <p>Sorry, the selected room type is not available for the chosen dates. Please go back and select different dates or room type.</p>
             <button onclick="window.location.href='index.php'">Go Back</button>
         <?php exit();
@@ -45,7 +47,7 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
     if ($roomType === "null") {
         $totalRoomPrice = 0;
     } else {
-        $totalRoomPrice = getRoomPrice($database, getRoomId($roomType)) * calculateDays($arrivalDate, $departureDate);
+        $totalRoomPrice = getRoomPrice($database, $roomId) * calculateDays($arrivalDate, $departureDate);
     }
     $totalCost = $totalFeaturesPrice + $totalRoomPrice;
 
@@ -149,7 +151,8 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
             $reciptResponse = $reciptResponse->getBody()->getContents();
             $reciptResponse = json_decode($reciptResponse, true);
             print_r($reciptResponse) ?>
-            <p>Booking successful! Your receipt ID is: <?= $reciptResponse['receipt'] ?></p>
+            <p>Booking successful! Your receipt is: <?= $reciptResponse['receipt_id'] ?></p>
+
         <?php
 
         } catch (Exception $e) {
@@ -161,12 +164,15 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
             exit();
         }
 
+
         // Insert reservation into database
         insertReservation($database, $guestId, $roomId, $arrivalDate, $departureDate);
         $reservationId = (int)$database->lastInsertId();
 
-        foreach ($features as $feature) {
-            insertBookedFeatures($database, $reservationId, $feature);
+        foreach ($featuresUsed as $feature) {
+            insertBookedFeatures($database, $reservationId, $feature['id'], $feature['price']);
         }
+
+        insertPayment($database, $reservationId, $totalCost, $transferCode, 'paid');
     }
 }

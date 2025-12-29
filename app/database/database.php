@@ -38,18 +38,29 @@ function insertReservation(PDO $database, int $guestId, int $roomType, string $a
     $insertReservation->execute();
 }
 
-function insertBookedFeatures(PDO $database, int $reservationId, string $feature): void
+function insertBookedFeatures(PDO $database, int $reservationId, int $featureId, int $price): void
 {
-    $insertFeatures = $database->prepare("INSERT INTO booked_features (reservation_id, features) VALUES (:reservation_id, :features)");
+    $insertFeatures = $database->prepare("INSERT INTO booked_features (reservation_id, feature_id, price) VALUES (:reservation_id, :feature_id, :price)");
     $insertFeatures->bindParam(':reservation_id', $reservationId);
-    $insertFeatures->bindParam(':features', $feature);
+    $insertFeatures->bindParam(':feature_id', $featureId);
+    $insertFeatures->bindParam(':price', $price);
     $insertFeatures->execute();
 }
 
-function roomAvailability(PDO $database, string $roomType, string $arrivalDate, string $departureDate): bool
+function insertPayment(PDO $database, int $reservationId, int $totalSum, string $transferCode, string $paymentStatus): void
+{
+    $insertPayment = $database->prepare("INSERT INTO payments (reservation_id, total_sum, transfer_code, payment_status) VALUES (:reservation_id, :total_sum, :transfer_code, :payment_status)");
+    $insertPayment->bindParam(':reservation_id', $reservationId);
+    $insertPayment->bindParam(':total_sum', $totalSum);
+    $insertPayment->bindParam(':transfer_code', $transferCode);
+    $insertPayment->bindParam(':payment_status', $paymentStatus);
+    $insertPayment->execute();
+}
+
+function roomAvailability(PDO $database, int $roomId, string $arrivalDate, string $departureDate): bool
 {
     $checkAvailability = $database->prepare("SELECT COUNT(*) FROM reservations WHERE room_id = :room_id AND ((arrival_date <= :departure_date AND departure_date >= :arrival_date))");
-    $checkAvailability->bindParam(':room_id', $roomType);
+    $checkAvailability->bindParam(':room_id', $roomId);
     $checkAvailability->bindParam(':arrival_date', $arrivalDate);
     $checkAvailability->bindParam(':departure_date', $departureDate);
     $checkAvailability->execute();
