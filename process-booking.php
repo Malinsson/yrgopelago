@@ -26,7 +26,8 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
 
     // Room availability check
     if ($roomType !== "null") {
-        if (!roomAvailability($database, $roomId, $arrivalDate, $departureDate)) { ?>
+        if (!roomAvailability($database, $roomId, $arrivalDate, $departureDate)) {
+?>
             <p>Sorry, the selected room type is not available for the chosen dates. Please go back and select different dates or room type.</p>
             <button onclick="window.location.href='index.php'">Go Back</button>
         <?php exit();
@@ -43,7 +44,6 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
         $totalFeaturesPrice = 0;
     }
 
-
     if ($roomType === "null") {
         $totalRoomPrice = 0;
     } else {
@@ -58,6 +58,7 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
     <?php
         exit();
     }
+
 
     // Returning guest discount
     if (returningGuest($database, $name)) {
@@ -86,13 +87,19 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
         <p>There was an error processing your request. Please try again later.</p>
         <p><?= $e->getMessage() ?></p>
         <button onclick="window.location.href='index.php'">Go Back</button>
-        <?php
+    <?php
         exit();
     }
 
 
-    // If transfer successful, proceed with booking
-    if (isset($response['transferCode']) && $response['status'] === 'success') {
+    // If transfer code generation was successful, proceed with booking
+    if (!isset($response['transferCode']) && $response['status'] === 'success') {
+    ?>
+        <p>There was an error processing your request. Please try again later.</p>
+        <p> <?= $response['message'] ?> </p>
+        <button onclick="window.location.href='index.php'">Go Back</button>
+        <?php exit();
+    } else {
         $transferCode = $response['transferCode'];
 
         $depositMoney = [
