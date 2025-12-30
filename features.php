@@ -72,3 +72,34 @@ function getFeaturePriceTotal(array $selectedFeatures, array $featureGrid): int
     }
     return $totalFeaturesPrice;
 }
+
+function updateFeaturePrices(PDO $database, int $basicPrice, int $standardPrice, int $premiumPrice, int $superiorPrice): void
+{
+    $updatePrices = $database->prepare("UPDATE features SET base_price = CASE tier 
+        WHEN 'basic' THEN :basic_price 
+        WHEN 'standard' THEN :standard_price 
+        WHEN 'premium' THEN :premium_price 
+        WHEN 'superior' THEN :superior_price 
+        END");
+    $updatePrices->bindParam(':basic_price', $basicPrice);
+    $updatePrices->bindParam(':standard_price', $standardPrice);
+    $updatePrices->bindParam(':premium_price', $premiumPrice);
+    $updatePrices->bindParam(':superior_price', $superiorPrice);
+    $updatePrices->execute();
+}
+
+function convertFeaturesToReceiptFormat(array $selectedFeatures, array $featureGrid): array
+{
+    $featuresForReceipt = [];
+    foreach ($selectedFeatures as $selectedFeature) {
+        foreach ($featureGrid as $feature) {
+            if ($feature['feature'] === $selectedFeature) {
+                $featuresForReceipt[] = [
+                    'activity' => $feature['activity'],
+                    'tier' => $feature['tier'],
+                ];
+            }
+        }
+    }
+    return $featuresForReceipt;
+}

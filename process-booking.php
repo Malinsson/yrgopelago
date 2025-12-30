@@ -25,6 +25,7 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
     $returningGuest = false;
     $roomId = getRoomId($roomType);
 
+
     // Room availability check
     if ($roomType !== "null") {
         if (!roomAvailability($database, $roomId, $arrivalDate, $departureDate)) {
@@ -35,8 +36,9 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
         }
     }
 
-
     // Calculate total cost
+
+    // Features cost calculation
     if (isset($_POST['features'])) {
         $features = $_POST['features'];
         $totalFeaturesPrice = getFeaturePriceTotal($features, $featureGrid);
@@ -45,6 +47,7 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
         $totalFeaturesPrice = 0;
     }
 
+    // Room cost calculation
     if ($roomType === "null") {
         $totalRoomPrice = 0;
     } else {
@@ -62,7 +65,7 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
 
 
     // Returning guest discount
-    if (returningGuest($database, $name)) {
+    if (returningGuest($database, $name) && $totalCost >= 3) {
         $returningGuest = true;
         $totalCost -= 1;
     }
@@ -93,7 +96,6 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
     }
 
 
-    // If transfer code generation was successful, proceed with booking
     if (!isset($response['transferCode']) && $response['status'] === 'success') {
     ?>
         <p>There was an error processing your request. Please try again later.</p>
@@ -101,6 +103,8 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
         <button onclick="window.location.href='index.php'">Go Back</button>
         <?php exit();
     } else {
+
+        // If transfer code generation was successful, proceed with booking
         $transferCode = $response['transferCode'];
 
         $depositMoney = [
@@ -133,9 +137,7 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
         $guestId = getGuestId($database, $name);
         $roomId = getRoomId($roomType);
 
-        $featuresUsed = [
-            ['activity' => 'hotel-specific', 'tier' => 'premium'],
-        ];
+        $featuresUsed = convertFeaturesToReceiptFormat($features, $featureGrid);
 
         $receipt = [
             'user' => 'Malin',
@@ -149,17 +151,17 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
 
 
         try {
-            $reciptResponse = $client->POST('https://www.yrgopelag.se/centralbank/receipt', [
+            $receiptResponse = $client->POST('https://www.yrgopelag.se/centralbank/receipt', [
                 'headers' => [
                     'Content-Type' => 'application/json',
                     'Accept' => 'application/json',
                 ],
                 'json' => $receipt,
             ]);
-            $reciptResponse = $reciptResponse->getBody()->getContents();
-            $reciptResponse = json_decode($reciptResponse, true);
-            print_r($reciptResponse) ?>
-            <p>Booking successful! Your receipt is: <?= $reciptResponse['receipt_id'] ?></p>
+            $receiptResponse = $receiptResponse->getBody()->getContents();
+            $receiptResponse = json_decode($receiptResponse, true);
+            var_dump($receipt) ?>
+            <p>Booking successful! Your receipt is: <?= $receiptResponse['receipt_id'] ?></p>
 
         <?php
 
