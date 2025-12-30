@@ -104,6 +104,11 @@
     color: white !important;
 }
 
+.booked {
+    background-color: #C23B22;
+    color: aqua;
+}
+
 @media screen and (max-width:768px) {
     .weekly-calendar-container {
         display: block;

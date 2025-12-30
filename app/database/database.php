@@ -28,6 +28,12 @@ function searchAllReservations(PDO $database): array
     return $reservations->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function searchBookedDates(PDO $database): array
+{
+    $bookedDates = $database->query('SELECT room_id, arrival_date, departure_date FROM reservations where room_id is not null');
+    return $bookedDates->fetchAll(PDO::FETCH_ASSOC);
+}
+
 function insertReservation(PDO $database, int $guestId, int $roomType, string $arrivalDate, string $departureDate): void
 {
     $insertReservation = $database->prepare("INSERT INTO reservations (guest_id, room_id, arrival_date, departure_date) VALUES (:guest_id, :room_id, :arrival_date, :departure_date)");

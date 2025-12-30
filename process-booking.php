@@ -19,15 +19,14 @@ $envApiKey = $_ENV['API_KEY'] ?? $_ENV['api_key'] ?? null;
 if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arrival-date'], $_POST['departure-date']) && $_POST['name'] !== '') {
     $name = clean($_POST['name']);
     $apiKey = clean($_POST['api-key']);
-    $roomType = clean($_POST['room-type']);
+    $roomId = (int) clean($_POST['room-type']);
     $arrivalDate = clean($_POST['arrival-date']);
     $departureDate = clean($_POST['departure-date']);
     $returningGuest = false;
-    $roomId = getRoomId($roomType);
 
 
     // Room availability check
-    if ($roomType !== "null") {
+    if ($roomId !== 0) {
         if (!roomAvailability($database, $roomId, $arrivalDate, $departureDate)) {
 ?>
             <p>Sorry, the selected room type is not available for the chosen dates. Please go back and select different dates or room type.</p>
@@ -162,8 +161,10 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
             $receiptResponse = json_decode($receiptResponse, true);
             var_dump($receipt) ?>
             <p>Booking successful! Your receipt is: <?= $receiptResponse['receipt_id'] ?></p>
-
+            <button onclick="window.location.href='index.php'">Go Back</button>
         <?php
+
+
 
         } catch (Exception $e) {
         ?>

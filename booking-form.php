@@ -14,10 +14,10 @@ require_once __DIR__ . '/app/database/database.php';
 
     <label for="room-type">Select room type:</label>
     <select id="room-type" name="room-type" required>
-        <option value="budget">Budget</option>
-        <option value="standard">Standard</option>
-        <option value="luxury">Luxury</option>
-        <option value="null">No room</option>
+        <option value='1'>Budget</option>
+        <option value='2'>Standard</option>
+        <option value='3'>Luxury</option>
+        <option value='0'>No room</option>
     </select>
 
     <label for="arrival-date">Select arrival date:</label>

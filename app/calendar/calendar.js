@@ -1,22 +1,25 @@
-<?php
+       document.getElementById("room-type").addEventListener("change", function() {
+            const roomId = this.value;
 
-declare(strict_types=1);
+            fetch("load_calendar.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: "room_id=" + roomId
+                })
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById("calendarContainer").innerHTML = html;
+                });
+        });
 
-require __DIR__ . '/vendor/autoload.php';
+        // Load default room on page load
+        window.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("roomSelector").dispatchEvent(new Event("change"));
+        });
 
-use benhall14\phpCalendar\Calendar as Calendar;
 
-try {
-    $calendar = new Calendar();
-    $calendar->useMondayStartingDate(); ?>
-
-    <div id="calendar-container">
-        <?php echo $calendar->draw(date('2026-01-01')); ?>
-    </div>
-
-    <!-- JavaScript to handle date selection via clicking on calendar days -->
-
-    <script>
         document.addEventListener('DOMContentLoaded', function() {
             const calendarContainer = document.getElementById('calendar-container');
             const arrivalInput = document.getElementById('arrival-date');
@@ -111,8 +114,3 @@ try {
             // Initial highlight if inputs already have values
             highlightFromInputs(arrivalInput.value, departureInput.value);
         });
-    </script>
-<?php
-} catch (Exception $e) { ?>
-    <p>Error displaying calendar: <?= htmlspecialchars($e->getMessage()) ?></p>
-<?php } ?>
