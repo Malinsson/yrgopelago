@@ -14,6 +14,11 @@ function toUppercase(string $data): string
     return ucfirst($data);
 }
 
+function toLowercase(string $data): string
+{
+    return strtolower($data);
+}
+
 function returningGuest(PDO $database, string $name): bool
 {
     $guests = searchAllGuests($database);

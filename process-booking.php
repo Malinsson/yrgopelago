@@ -7,6 +7,7 @@ use Dotenv\Dotenv;
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/app/database/database.php';
+require_once __DIR__ . '/features.php';
 
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->safeLoad();
@@ -38,7 +39,7 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
     // Calculate total cost
     if (isset($_POST['features'])) {
         $features = $_POST['features'];
-        // $totalFeaturesPrice = getFeaturePriceTotal($features, $featureGrid);
+        $totalFeaturesPrice = getFeaturePriceTotal($features, $featureGrid);
     } else {
         $features = [];
         $totalFeaturesPrice = 0;
