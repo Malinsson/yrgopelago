@@ -1,33 +1,17 @@
-       document.getElementById("room-type").addEventListener("change", function() {
-            const roomId = this.value;
-
-            fetch("app/calendar/calendar.php", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
-                    body: "room-type=" + roomId
-                })
-                .then(response => response.text())
-                .then(html => {
-                    document.getElementById("calendar-container").innerHTML = html;
-                });
-        });
-
-
-        document.addEventListener('DOMContentLoaded', function() {
+        function initializeCalendar() {
             const calendarContainer = document.getElementById('calendar-container');
             const arrivalInput = document.getElementById('arrival-date');
             const departureInput = document.getElementById('departure-date');
 
-            if (!arrivalInput || !departureInput) {
+            if (!arrivalInput || !departureInput || !calendarContainer) {
                 return;
             }
 
             const dayCells = calendarContainer.querySelectorAll('td, div[class*="day"]');
 
             function clearHighlights() {
-                dayCells.forEach(c => {
+                const cells = calendarContainer.querySelectorAll('td, div[class*="day"]');
+                cells.forEach(c => {
                     c.classList.remove('calendar-selected');
                     c.classList.remove('calendar-departure');
                 });
@@ -50,8 +34,10 @@
                 const arrival = parseYMD(arrivalStr);
                 const departure = parseYMD(departureStr);
 
+                const cells = calendarContainer.querySelectorAll('td, div[class*="day"]');
+
                 if (arrival && arrival.y === 2026 && arrival.m === 1) {
-                    dayCells.forEach(c => {
+                    cells.forEach(c => {
                         const cellDay = parseInt(c.textContent.trim(), 10);
                         if (!isNaN(cellDay) && cellDay === arrival.d) {
                             c.classList.add('calendar-selected');
@@ -60,7 +46,7 @@
                 }
 
                 if (departure && departure.y === 2026 && departure.m === 1) {
-                    dayCells.forEach(c => {
+                    cells.forEach(c => {
                         const cellDay = parseInt(c.textContent.trim(), 10);
                         if (!isNaN(cellDay) && cellDay === departure.d) {
                             c.classList.add('calendar-departure');
@@ -98,14 +84,81 @@
                 }
             });
 
-            // Sync highlights when arrival is changed via the form (not just calendar clicks)
-            arrivalInput.addEventListener('change', function() {
-                highlightFromInputs(arrivalInput.value, departureInput.value);
-            });
-            departureInput.addEventListener('change', function() {
-                highlightFromInputs(arrivalInput.value, departureInput.value);
-            });
-
             // Initial highlight if inputs already have values
             highlightFromInputs(arrivalInput.value, departureInput.value);
+        }
+
+        document.getElementById("room-type").addEventListener("change", function() {
+            const roomId = this.value;
+
+            fetch("app/calendar/calendar.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: "room-type=" + roomId
+                })
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById("calendar-container").innerHTML = html;
+                    initializeCalendar(); // Re-initialize after calendar is updated
+                });
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const arrivalInput = document.getElementById('arrival-date');
+            const departureInput = document.getElementById('departure-date');
+
+            if (!arrivalInput || !departureInput) {
+                return;
+            }
+
+            // Initialize calendar on page load
+            initializeCalendar();
+
+            // Sync highlights when arrival/departure is changed via the form inputs
+            arrivalInput.addEventListener('change', function() {
+                const calendarContainer = document.getElementById('calendar-container');
+                if (!calendarContainer) return;
+                
+                const cells = calendarContainer.querySelectorAll('td, div[class*="day"]');
+                cells.forEach(c => {
+                    c.classList.remove('calendar-selected');
+                    c.classList.remove('calendar-departure');
+                });
+
+                // Re-highlight based on current values
+                const parseYMD = (str) => {
+                    if (!str) return null;
+                    const parts = str.split('-').map(Number);
+                    if (parts.length !== 3) return null;
+                    return { y: parts[0], m: parts[1], d: parts[2] };
+                };
+
+                const arrival = parseYMD(arrivalInput.value);
+                const departure = parseYMD(departureInput.value);
+
+                if (arrival && arrival.y === 2026 && arrival.m === 1) {
+                    cells.forEach(c => {
+                        const cellDay = parseInt(c.textContent.trim(), 10);
+                        if (!isNaN(cellDay) && cellDay === arrival.d) {
+                            c.classList.add('calendar-selected');
+                        }
+                    });
+                }
+
+                if (departure && departure.y === 2026 && departure.m === 1) {
+                    cells.forEach(c => {
+                        const cellDay = parseInt(c.textContent.trim(), 10);
+                        if (!isNaN(cellDay) && cellDay === departure.d) {
+                            c.classList.add('calendar-departure');
+                        }
+                    });
+                }
+            });
+            
+            departureInput.addEventListener('change', function() {
+                arrivalInput.dispatchEvent(new Event('change'));
+            });
         });
