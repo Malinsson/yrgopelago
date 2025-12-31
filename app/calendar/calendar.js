@@ -58,7 +58,36 @@
             dayCells.forEach(cell => {
                 const dayText = cell.textContent.trim();
                 if (dayText && !isNaN(dayText) && parseInt(dayText) > 0 && parseInt(dayText) <= 31) {
+                    const day = parseInt(dayText);
+                    
+                    // Check if this cell or any child has 'booked' class
+                    const isBooked = cell.classList.contains('booked') || 
+                                    cell.querySelector('.booked') !== null ||
+                                    cell.closest('.booked') !== null;
+                    
+                    // Check if the next day is booked
+                    const nextDayCells = calendarContainer.querySelectorAll('td, div[class*="day"]');
+                    let nextDayBooked = false;
+                    
+                    nextDayCells.forEach(c => {
+                        const cellDay = parseInt(c.textContent.trim(), 10);
+                        if (!isNaN(cellDay) && cellDay === day + 1) {
+                            if (c.classList.contains('booked') || 
+                                c.querySelector('.booked') !== null ||
+                                c.closest('.booked') !== null) {
+                                nextDayBooked = true;
+                            }
+                        }
+                    });
+                    
+                    if (isBooked || nextDayBooked) {
+                        cell.style.cursor = 'not-allowed';
+                        cell.style.opacity = '0.6';
+                        return; // Don't add click handler
+                    }
+                    
                     cell.style.cursor = 'pointer';
+                    cell.style.opacity = '1';
                     cell.addEventListener('click', function(e) {
                         clearHighlights();
 
@@ -66,7 +95,6 @@
 
                         const year = 2026;
                         const month = 1;
-                        const day = parseInt(dayText);
 
                         const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
