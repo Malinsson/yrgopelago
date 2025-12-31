@@ -106,7 +106,7 @@
 
 .booked {
     background-color: #C23B22;
-    color: aqua;
+    color: white !important;
 }
 
 @media screen and (max-width:768px) {

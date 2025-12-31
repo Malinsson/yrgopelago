@@ -1,22 +1,17 @@
        document.getElementById("room-type").addEventListener("change", function() {
             const roomId = this.value;
 
-            fetch("load_calendar.php", {
+            fetch("app/calendar/calendar.php", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded"
                     },
-                    body: "room_id=" + roomId
+                    body: "room-type=" + roomId
                 })
                 .then(response => response.text())
                 .then(html => {
-                    document.getElementById("calendarContainer").innerHTML = html;
+                    document.getElementById("calendar-container").innerHTML = html;
                 });
-        });
-
-        // Load default room on page load
-        window.addEventListener("DOMContentLoaded", () => {
-            document.getElementById("roomSelector").dispatchEvent(new Event("change"));
         });
 
 

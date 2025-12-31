@@ -7,6 +7,8 @@ require_once __DIR__ . '/../database/database.php';
 
 use benhall14\phpCalendar\Calendar as Calendar;
 
+$selectedRoomId = isset($_POST['room-type']) ? (int) $_POST['room-type'] : 1;
+
 try {
     $calendar = new Calendar();
     $calendar->useMondayStartingDate();
@@ -14,24 +16,28 @@ try {
     $bookedDates = searchBookedDates($database);
 
     foreach ($bookedDates as $booking) {
-        if ($booking['room_id'] === 1) {
+        if ($booking['room_id'] === $selectedRoomId) {
 
             $calendar->addEvent(
-                $booking['arrival_date'],   # start date in either Y-m-d or Y-m-d H:i if you want to add a time.
-                $booking['departure_date'],   # end date in either Y-m-d or Y-m-d H:i if you want to add a time.
-                'Booked',  # event name text
-                true,           # should the date be masked - boolean default true
-                ['booked'],   # (optional) additional classes in either string or array format to be included on the event days
-                ['booked']
+                $booking['arrival_date'],
+                $booking['departure_date'],
+                'Booked',
+                true,
+                ['booked'],
+                ['booked'],
             );
         }
     }
 
 ?>
 
-    <div id="calendar-container">
+    <?php if (!isset($_POST['room-type'])): ?>
+        <div id="calendar-container">
+        <?php endif; ?>
         <?php echo $calendar->draw(date('2026-01-01')); ?>
-    </div>
+        <?php if (!isset($_POST['room-type'])): ?>
+        </div>
+    <?php endif; ?>
 
 <?php
 } catch (Exception $e) { ?>
