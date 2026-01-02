@@ -1,11 +1,11 @@
 .weekly-calendar {
-    min-width: 850px;
+    min-width: 450px;
 }
 
 .calendar {
     background: #dfe4e6;
     color: #000000;
-    width: 50%;
+    width: 100%;
     font-family: 'Oxygen';
     table-layout: fixed;
 }

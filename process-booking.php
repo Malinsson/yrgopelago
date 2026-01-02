@@ -134,7 +134,6 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
         }
 
         $guestId = getGuestId($database, $name);
-        $roomId = getRoomId($roomType);
 
         $featuresUsed = convertFeaturesToReceiptFormat($features, $featureGrid);
 

@@ -20,12 +20,16 @@ require_once __DIR__ . '/app/database/database.php';
         <option value='0'>No room</option>
     </select>
 
-    <label for="arrival-date">Select arrival date:</label>
-    <input type="date" id="arrival-date" name="arrival-date" min="2026-01-01" max="2026-01-31" required>
-
-    <label for="departure-date">Select departure date:</label>
-    <input type="date" id="departure-date" name="departure-date" min="2026-01-02" max="2026-01-31" required>
-
+    <div class="date-wrapper">
+        <div class="arrival-date-wrapper">
+            <label for="arrival-date">Select arrival date:</label>
+            <input type="date" id="arrival-date" name="arrival-date" min="2026-01-01" max="2026-01-31" required>
+        </div>
+        <div class="departure-date-wrapper">
+            <label for="departure-date">Select departure date:</label>
+            <input type="date" id="departure-date" name="departure-date" min="2026-01-02" max="2026-01-31" required>
+        </div>
+    </div>
     <fieldset>
         <legend>Select Features:</legend>
         <?php displayFeaturesCheckboxes($featureGrid); ?>

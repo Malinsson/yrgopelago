@@ -1,3 +1,155 @@
+:root{
+    --background-color: #57c1e9;
+    --card-background: #e3e3e3b3;
+    --rounded-corners: 0.5rem;
+}
+
+.mukta-malar-light {
+  font-family: "Mukta Malar", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.mukta-malar-medium {
+  font-family: "Mukta Malar", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.mukta-malar-semibold {
+  font-family: "Mukta Malar", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.mukta-malar-bold {
+  font-family: "Mukta Malar", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.mukta-malar-extrabold {
+  font-family: "Mukta Malar", sans-serif;
+  font-weight: 800;
+  font-style: normal;
+}
+
+*{
+    box-sizing: border-box;
+    font-family: "Mukta Malar", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+body{
+    background-color: var(--background-color);
+    margin: 0;
+}
+
+header {
+    background-color: var(--card-background);
+    display: flex;
+    padding: 1rem 2rem 1rem 2rem;
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+.v-line{
+    border: 1px solid black;
+    height: 100px;
+    margin-left: 1rem;
+}
+
+.navbar, h2{
+    margin: 0;
+    list-style: none;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem
+}
+
+.navbar li{
+    font-size: 1.5rem;
+    padding: 1rem;
+}
+
+.navbar li:hover{
+    background-color: #666;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+.hero-container, .room-card, header{
+    width: 100%;
+}
+
+.hero-image, .room-image{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.room-showcase {
+    margin: 2rem;
+
+}
+
+.room-card, .booking-section{
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    height: 26rem;
+    padding: 2rem;
+    max-width: 2000px;
+    border-radius: var(--rounded-corners);
+    display: flex;
+    justify-content: space-between;
+    background-color: var(--card-background);
+}
+
+.room-img-container{
+    width: 40%;
+}
+
+.room-image{
+    border-radius: var(--rounded-corners);
+}
+
+.booking-section{
+height: 35rem;
+margin: 2rem;
+gap: 2rem
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#calendar-container{
+    width: 55rem;
+}
+
+.date-wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.arrival-date-wrapper, .departure-date-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
 footer {
     background-color: #f0f0f0;
     padding: 20px;
