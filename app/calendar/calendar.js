@@ -101,11 +101,23 @@
                         arrivalInput.value = formattedDate;
                         arrivalInput.dispatchEvent(new Event('change'));
 
-                        const nextDay = new Date(year, month - 1, day + 1);
-                        const nextDayDay = nextDay.getDate();
-                        const nextDayStr = `${nextDay.getFullYear()}-${String(nextDay.getMonth() + 1).padStart(2, '0')}-${String(nextDayDay).padStart(2, '0')}`;
-                        departureInput.min = nextDayStr;
-                        departureInput.value = nextDayStr;
+                        // Check if "no room" is selected
+                        const roomTypeSelect = document.getElementById('room-type');
+                        const isNoRoom = roomTypeSelect && roomTypeSelect.value === '0';
+                        
+                        let departureDate;
+                        if (isNoRoom) {
+                            // Same day as arrival for "no room"
+                            departureDate = formattedDate;
+                        } else {
+                            // Next day for room bookings
+                            const nextDay = new Date(year, month - 1, day + 1);
+                            const nextDayDay = nextDay.getDate();
+                            departureDate = `${nextDay.getFullYear()}-${String(nextDay.getMonth() + 1).padStart(2, '0')}-${String(nextDayDay).padStart(2, '0')}`;
+                        }
+                        
+                        departureInput.min = departureDate;
+                        departureInput.value = departureDate;
 
                         highlightFromInputs(arrivalInput.value, departureInput.value);
                     });
