@@ -25,15 +25,6 @@ try {
                 true,
                 ['booked'],
             );
-
-            // Add departure date as a separate single-day event to ensure it's marked as booked
-            $calendar->addEvent(
-                $booking['departure_date'],
-                $booking['departure_date'],
-                'Booked',
-                true,
-                ['booked'],
-            );
         }
     }
 

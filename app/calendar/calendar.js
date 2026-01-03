@@ -65,22 +65,7 @@
                                     cell.querySelector('.booked') !== null ||
                                     cell.closest('.booked') !== null;
                     
-                    // Check if the next day is booked
-                    const nextDayCells = calendarContainer.querySelectorAll('td, div[class*="day"]');
-                    let nextDayBooked = false;
-                    
-                    nextDayCells.forEach(c => {
-                        const cellDay = parseInt(c.textContent.trim(), 10);
-                        if (!isNaN(cellDay) && cellDay === day + 1) {
-                            if (c.classList.contains('booked') || 
-                                c.querySelector('.booked') !== null ||
-                                c.closest('.booked') !== null) {
-                                nextDayBooked = true;
-                            }
-                        }
-                    });
-                    
-                    if (isBooked || nextDayBooked) {
+                    if (isBooked) {
                         cell.style.cursor = 'not-allowed';
                         cell.style.opacity = '0.6';
                         return; // Don't add click handler
