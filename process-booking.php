@@ -35,6 +35,7 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
         }
     }
 
+
     // Calculate total cost
 
     // Features cost calculation
@@ -47,7 +48,7 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
     }
 
     // Room cost calculation
-    if ($roomType === "null") {
+    if ($roomType === "0") {
         $totalRoomPrice = 0;
     } else {
         $totalRoomPrice = getRoomPrice($database, $roomId) * calculateDays($arrivalDate, $departureDate);
@@ -86,6 +87,7 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
         $response = $response->getBody()->getContents();
         $response = json_decode($response, true);
     } catch (Exception $e) {
+        //Catch doesn't always work??
     ?>
         <p>There was an error processing your request. Please try again later.</p>
         <p><?= $e->getMessage() ?></p>
@@ -94,8 +96,8 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
         exit();
     }
 
-
-    if (!isset($response['transferCode']) && $response['status'] === 'success') {
+    //Backup of above try-catch block
+    if ($response['status'] === 'error') {
     ?>
         <p>There was an error processing your request. Please try again later.</p>
         <p> <?= $response['message'] ?> </p>
