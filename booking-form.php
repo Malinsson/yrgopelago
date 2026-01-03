@@ -3,7 +3,27 @@ require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/features.php';
 require_once __DIR__ . '/app/database/database.php';
 
+$roomsData = searchAllRooms($database);
+$roomPrices = [
+    '0' => 0  // No room
+];
+
+foreach ($roomsData as $room) {
+    $roomPrices[$room['id']] = $room['price_per_night'];
+}
+
+$featurePrices = [];
+foreach ($featureGrid as $feature) {
+    $featurePrices[$feature['feature']] = $feature['base_price'];
+}
+
+$bookingData = [
+    'roomPrices' => $roomPrices,
+    'featurePrices' => $featurePrices
+];
+
 ?>
+
 
 <form method="post" action="process-booking.php">
     <label for="name">Name:</label>
@@ -35,32 +55,14 @@ require_once __DIR__ . '/app/database/database.php';
         <?php displayFeaturesCheckboxes($featureGrid); ?>
     </fieldset>
 
+    <div id="total-price-container">
+        <p>Total Price: $<span id="total-price">0</span></p>
+    </div>
     <button type="submit">Book Now</button>
 </form>
 
 
-<!-- JavaScript to sync departure date with arrival date -->
+<!-- Pass PHP data to JavaScript file -->
 <script>
-    const arrivalDateInput = document.getElementById('arrival-date');
-    const departureDateInput = document.getElementById('departure-date');
-
-    function syncDepartureWithArrival() {
-        if (!arrivalDateInput.value) return;
-
-        const arrivalDate = new Date(arrivalDateInput.value);
-        arrivalDate.setDate(arrivalDate.getDate() + 1);
-
-        const minDepartureDate = `${arrivalDate.getFullYear()}-${String(arrivalDate.getMonth() + 1).padStart(2, '0')}-${String(arrivalDate.getDate()).padStart(2, '0')}`;
-        departureDateInput.min = minDepartureDate;
-
-        if (!departureDateInput.value || departureDateInput.value < minDepartureDate) {
-            departureDateInput.value = minDepartureDate;
-        }
-    }
-
-    syncDepartureWithArrival();
-
-    arrivalDateInput.addEventListener('change', function() {
-        syncDepartureWithArrival();
-    });
+    window.bookingData = <?= json_encode($bookingData); ?>;
 </script>

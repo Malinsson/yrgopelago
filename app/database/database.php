@@ -83,3 +83,10 @@ function getRoomPrice(PDO $database, int $roomId): int
     $priceData = $getPrice->fetch(PDO::FETCH_ASSOC);
     return (int)$priceData['price_per_night'];
 }
+
+function insertGuest(PDO $database, string $name): void
+{
+    $insertGuest = $database->prepare("INSERT INTO guests (name) VALUES (:name)");
+    $insertGuest->bindParam(':name', $name);
+    $insertGuest->execute();
+}

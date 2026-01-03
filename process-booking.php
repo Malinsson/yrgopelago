@@ -128,14 +128,6 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
         }
 
 
-        // Insert guest if new guest
-        if (!$returningGuest) {
-            $insertGuest = $database->prepare("INSERT INTO guests (name) VALUES (:name)");
-            $insertGuest->bindParam(':name', $name);
-            $insertGuest->execute();
-        }
-
-        $guestId = getGuestId($database, $name);
 
         $featuresUsed = convertFeaturesToReceiptFormat($features, $featureGrid);
 
@@ -176,6 +168,12 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
             exit();
         }
 
+        // Insert guest if new guest
+        if (!$returningGuest) {
+            insertGuest($database, $name);
+        }
+
+        $guestId = getGuestId($database, $name);
 
         // Insert reservation into database
         insertReservation($database, $guestId, $roomId, $arrivalDate, $departureDate);
