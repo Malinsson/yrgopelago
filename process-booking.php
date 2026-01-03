@@ -181,10 +181,14 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
         insertReservation($database, $guestId, $roomId, $arrivalDate, $departureDate);
         $reservationId = (int)$database->lastInsertId();
 
-        foreach ($featuresUsed as $feature) {
-            insertBookedFeatures($database, $reservationId, $feature['id'], $feature['price']);
+        // Insert booked features into database
+        if (!empty($features)) {
+            foreach ($features as $feature) {
+                $featureId = getFeatureIdByName($database, $feature);
+                $featurePrice = getFeaturePriceByName($database, $feature);
+                insertBookedFeatures($database, $reservationId, $featureId, $featurePrice);
+            }
         }
-
         insertPayment($database, $reservationId, $totalCost, $transferCode, 'paid');
     }
 }

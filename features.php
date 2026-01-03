@@ -103,3 +103,21 @@ function convertFeaturesToReceiptFormat(array $selectedFeatures, array $featureG
     }
     return $featuresForReceipt;
 }
+
+function getFeatureIdByName(PDO $database, string $featureName): ?int
+{
+    $getFeatureId = $database->prepare("SELECT id FROM features WHERE feature = :feature");
+    $getFeatureId->bindParam(':feature', $featureName);
+    $getFeatureId->execute();
+    $featureData = $getFeatureId->fetch(PDO::FETCH_ASSOC);
+    return $featureData ? (int)$featureData['id'] : null;
+}
+
+function getFeaturePriceByName(PDO $database, string $featureName): ?int
+{
+    $getFeaturePrice = $database->prepare("SELECT base_price FROM features WHERE feature = :feature");
+    $getFeaturePrice->bindParam(':feature', $featureName);
+    $getFeaturePrice->execute();
+    $featureData = $getFeaturePrice->fetch(PDO::FETCH_ASSOC);
+    return $featureData ? (int)$featureData['base_price'] : null;
+}

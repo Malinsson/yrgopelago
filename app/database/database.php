@@ -65,7 +65,7 @@ function insertPayment(PDO $database, int $reservationId, int $totalSum, string 
 
 function roomAvailability(PDO $database, int $roomId, string $arrivalDate, string $departureDate): bool
 {
-    $checkAvailability = $database->prepare("SELECT COUNT(*) FROM reservations WHERE room_id = :room_id AND ((arrival_date <= :departure_date AND departure_date >= :arrival_date))");
+    $checkAvailability = $database->prepare("SELECT COUNT(*) FROM reservations WHERE room_id = :room_id AND ((arrival_date < :departure_date AND departure_date >= :arrival_date))");
     $checkAvailability->bindParam(':room_id', $roomId);
     $checkAvailability->bindParam(':arrival_date', $arrivalDate);
     $checkAvailability->bindParam(':departure_date', $departureDate);
