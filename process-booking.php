@@ -105,27 +105,6 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
         <?php exit();
     } else {
 
-        // If transfer code generation was successful, proceed with booking
-        $transferCode = $response['transferCode'];
-
-        $depositMoney = [
-            'form_params' => [
-                'user' => 'Malin',
-                'transferCode' => $transferCode,
-            ],
-        ];
-
-        try {
-            $depositResponse = $client->POST('https://www.yrgopelag.se/centralbank/deposit', $depositMoney);
-            $depositResponse = $depositResponse->getBody()->getContents();
-            $depositResponse = json_decode($depositResponse, true);
-        } catch (Exception $e) {
-        ?>
-            <p>There was an error processing your request. Please try again later.</p>
-            <p><?= $e->getMessage() ?></p>
-            <button onclick="window.location.href='index.php'">Go Back</button>
-        <?php exit();
-        }
 
 
 
@@ -152,21 +131,45 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
             ]);
             $receiptResponse = $receiptResponse->getBody()->getContents();
             $receiptResponse = json_decode($receiptResponse, true);
-            var_dump($receipt) ?>
-            <p>Booking successful! Your receipt is: <?= $receiptResponse['receipt_id'] ?></p>
+        ?>
+            <h2>Booking Successful!</h2>
+            <p>Your receipt ID is: <?= $receiptResponse['receipt_id'] ?></p>
+            <h3>Receipt Details:</h3>
+            <pre><?= json_encode($receipt, JSON_PRETTY_PRINT); ?></pre>
             <button onclick="window.location.href='index.php'">Go Back</button>
         <?php
-
-
 
         } catch (Exception $e) {
         ?>
             <p>There was an error processing your request. Please try again later.</p>
             <p><?= $e->getMessage() ?></p>
             <button onclick="window.location.href='index.php'">Go Back</button>
-<?php
+        <?php
             exit();
         }
+
+        // If transfer code generation was successful and guest availability confirmed, proceed with booking
+        $transferCode = $response['transferCode'];
+
+        $depositMoney = [
+            'form_params' => [
+                'user' => 'Malin',
+                'transferCode' => $transferCode,
+            ],
+        ];
+
+        try {
+            $depositResponse = $client->POST('https://www.yrgopelag.se/centralbank/deposit', $depositMoney);
+            $depositResponse = $depositResponse->getBody()->getContents();
+            $depositResponse = json_decode($depositResponse, true);
+        } catch (Exception $e) {
+        ?>
+            <p>There was an error processing your request. Please try again later.</p>
+            <p><?= $e->getMessage() ?></p>
+            <button onclick="window.location.href='index.php'">Go Back</button>
+<?php exit();
+        }
+
 
         // Insert guest if new guest
         if (!$returningGuest) {
@@ -187,6 +190,8 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
                 insertBookedFeatures($database, $reservationId, $featureId, $featurePrice);
             }
         }
+
+        // Insert payment into database
         insertPayment($database, $reservationId, $totalCost, $transferCode, 'paid');
     }
 }
