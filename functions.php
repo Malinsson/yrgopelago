@@ -39,7 +39,7 @@ function getRoomId(string $roomType): ?int
 {
     if ($roomType === "budget") {
         return 1;
-    } elseif ($roomType === "standard") {
+    } elseif ($roomType === "premium") {
         return 2;
     } elseif ($roomType === "luxury") {
         return 3;

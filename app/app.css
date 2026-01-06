@@ -1,37 +1,11 @@
 :root{
-    --background-color: #57c1e9;
     --card-background: #e3e3e3b3;
+    --feverish-pink: #D4384E;
+    --calypso: #31A9C1;
+    --regatta: #2B5474;
+    --lime-ricky: #A9C16B;
+    --vivacious-pink: #E186A7;
     --rounded-corners: 0.5rem;
-}
-
-.mukta-malar-light {
-  font-family: "Mukta Malar", sans-serif;
-  font-weight: 300;
-  font-style: normal;
-}
-
-.mukta-malar-medium {
-  font-family: "Mukta Malar", sans-serif;
-  font-weight: 500;
-  font-style: normal;
-}
-
-.mukta-malar-semibold {
-  font-family: "Mukta Malar", sans-serif;
-  font-weight: 600;
-  font-style: normal;
-}
-
-.mukta-malar-bold {
-  font-family: "Mukta Malar", sans-serif;
-  font-weight: 700;
-  font-style: normal;
-}
-
-.mukta-malar-extrabold {
-  font-family: "Mukta Malar", sans-serif;
-  font-weight: 800;
-  font-style: normal;
 }
 
 *{
@@ -42,12 +16,14 @@
 }
 
 body{
-    background-color: var(--background-color);
     margin: 0;
 }
 
+
+
+/*Header stydling*/
 header {
-    background-color: var(--card-background);
+    background-color: var(--regatta);
     display: flex;
     padding: 1rem 2rem 1rem 2rem;
 }
@@ -57,12 +33,13 @@ h2 {
 }
 
 .v-line{
-    border: 1px solid black;
+    border: 1px solid white;
     height: 100px;
     margin-left: 1rem;
 }
 
-.navbar, h2{
+.navbar, .header-name{
+    color: white;
     margin: 0;
     list-style: none;
     padding: 1rem;
@@ -74,30 +51,71 @@ h2 {
 .navbar li{
     font-size: 1.5rem;
     padding: 1rem;
+
 }
 
 .navbar li:hover{
-    background-color: #666;
+    background-color: var(--vivacious-pink);
 }
 
-a {
+header nav li a {
     text-decoration: none;
-    color: black;
+    color: white;
+
+}
+
+
+
+/*Hero image styling*/
+h1 {
+    font-weight: 700;
+    font-size: 4rem;
+    margin: 0;
+}
+
+.overlay {
+    color: white;
+    position: absolute;
+    padding: 3rem;
+    gap: 2rem;
+
+    
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    font-weight: 500;
+
+}
+
+.hero-container{
+    position: relative;
+    
 }
 
 .hero-container, .room-card, header{
     width: 100%;
 }
 
-.hero-image, .room-image{
+.hero-image, .room-image, .overlay{
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
+
+
+/*Room showcase section*/
 .room-showcase {
     margin: 2rem;
+    
+}
 
+.card-header {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    color: var(--regatta);
 }
 
 .room-card, .booking-section{
@@ -120,6 +138,23 @@ a {
     border-radius: var(--rounded-corners);
 }
 
+button {
+    background-color: var(--feverish-pink);
+    cursor: pointer;
+    border: 0px;
+    border-radius: var(--rounded-corners);
+    padding: 0.5rem;
+    color: white;
+}
+
+button:hover{
+    background-color:#9b1f30;
+    box-shadow: 0px 2px 8px 0px var(--feverish-pink);
+}
+
+
+
+/*Booking section*/
 .booking-section{
 height: 35rem;
 margin: 2rem;
@@ -150,15 +185,17 @@ form{
     width: 100%;
 }
 
+
+
+/*Footer styling*/
 footer {
-    background-color: #f0f0f0;
+    background-color: var(--regatta);
     padding: 20px;
     margin-top: 20px;
     text-align: center;
-    border-top: 1px solid #ddd;
 }
 
 footer p {
     margin: 0;
-    color: #666;
+    color: var(--card-background);
 }
