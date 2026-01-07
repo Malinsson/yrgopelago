@@ -4,18 +4,38 @@ require_once __DIR__ . '/views/header.php';
 require_once __DIR__ . '/app/database/database.php';
 ?>
 
+
+<div class="hero-container">
+    <div class="overlay">
+        <h1 class="hero-title">Welcome to Mos'Le'Harmless</h1>
+        <p class="hero-subtitle">Your Mos'Le'Safe getaway in the heart of Yrgopelago</p>
+    </div>
+    <img src="./images/hero.jpg" alt="Hero Image" class="hero-image">
+</div>
+
 <main>
 
-    <div class="hero-container">
-        <div class="overlay">
-            <h1 class="hero-title">Welcome to Mos'Le'Harmless</h1>
-            <p class="hero-subtitle">Your Mos'Le'Safe getaway in the heart of Yrgopelago</p>
+    <section class="about-section card" id="about-section">
+        <h2 class="card-header">About Mos'Le'Harmless</h2>
+        <p>Located in the stunning Yrgopelago, Mos'Le'Harmless offers a unique balance between comfort and adventure. Our accommodations are designed to provide a Mos'Le'safe haven from the local wildlife while ensuring you have an unforgettable experience. Whether you're here for relaxation or exploration, our friendly staff and top-notch facilities are here to make your stay exceptional.</p>
+    </section>
+
+    <section class="offer-section card" id="offer-section">
+        <div class="offer-card">
+            <h2 class="card-header">Returning guest discount!</h2>
+            <p>Enjoy a special discount when you return to Mos'Le'Harmless. We appreciate our loyal guests and want to make your next stay even more enjoyable.</p>
+            <p>Just use the same name and API-KEY to automatically receive your discount at booking!</p>
+            <b>Returning guest discount of <?= $returningGuestDiscount ?>$ on bookings of <?= $minimumBookingForDiscount ?>$ or more!</b>
         </div>
-        <img src="./images/hero.jpg" alt="Hero Image" class="hero-image">
-    </div>
+        <div class="feature-card">
+            <h2 class="card-header">Book exclusive features!</h2>
+            <p>Enhance your stay with our exclusive add-ons and personalized services designed to make your experience truly memorable. Add as many features as you like to customize your visit.</p>
+            <b>Features aren't exclusive to our staying guests; day visitors can also enjoy them!</b>
+        </div>
+    </section>
 
     <section class="room-showcase" id="room-showcase">
-        <div class="room-card budget">
+        <div class="room-card budget card">
 
             <div class="room-info-wrapper">
                 <h2 class="card-header">Budget Room</h2>
@@ -35,7 +55,7 @@ require_once __DIR__ . '/app/database/database.php';
             </div>
         </div>
 
-        <div class="room-card premium">
+        <div class="room-card premium card">
             <div class="room-info-wrapper">
                 <h2 class="card-header">Premium Room</h2>
                 <p class="card-description">Cozy and affordable room for budget-conscious travelers.</p>
@@ -53,7 +73,7 @@ require_once __DIR__ . '/app/database/database.php';
             </div>
         </div>
 
-        <div class="room-card luxury">
+        <div class="room-card luxury card">
             <div class="room-info-wrapper">
                 <h2 class="card-header">Luxury Room</h2>
                 <p class="card-description">Cozy and affordable room for budget-conscious travelers.</p>
@@ -73,7 +93,7 @@ require_once __DIR__ . '/app/database/database.php';
         </div>
     </section>
 
-    <section class="booking-section" id="booking-section">
+    <section class="booking-section card" id="booking-section">
         <?php
         require_once __DIR__ . '/booking-form.php';
         require_once __DIR__ . '/app/calendar/calendar.php';

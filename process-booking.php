@@ -2,18 +2,17 @@
 
 declare(strict_types=1);
 
-use Dotenv\Dotenv;
-
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/app/database/database.php';
 require_once __DIR__ . '/features.php';
 
+use Dotenv\Dotenv;
+
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->safeLoad();
 
 $envApiKey = $_ENV['API_KEY'] ?? $_ENV['api_key'] ?? null;
-
 
 
 if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arrival-date'], $_POST['departure-date']) && $_POST['name'] !== '') {
@@ -23,6 +22,7 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
     $arrivalDate = clean($_POST['arrival-date']);
     $departureDate = clean($_POST['departure-date']);
     $returningGuest = false;
+
 
 
     // Room availability check
@@ -65,9 +65,9 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
 
 
     // Returning guest discount
-    if (returningGuest($database, $name) && $totalCost >= 3) {
+    if (returningGuest($database, $name) && $totalCost >= $minimumBookingForDiscount) {
         $returningGuest = true;
-        $totalCost -= 1;
+        $totalCost -= $returningGuestDiscount;
     }
 
 

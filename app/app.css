@@ -17,8 +17,16 @@
 
 body{
     margin: 0;
+    background-image: linear-gradient(45deg, #31a9c175,  var(--calypso), var(--regatta));
 }
 
+main {
+    padding: 0rem 2rem 2rem 2rem;
+}
+
+b{
+    font-weight: bold;
+}
 
 
 /*Header stydling*/
@@ -55,7 +63,8 @@ h2 {
 }
 
 .navbar li:hover{
-    background-color: var(--vivacious-pink);
+    background-color: var(--feverish-pink);
+    border-radius: var(--rounded-corners);
 }
 
 header nav li a {
@@ -103,31 +112,48 @@ h1 {
     object-fit: cover;
 }
 
+/*About and offer section*/
+.about-section, .offer-section {
+    padding: 2rem;
+    margin-top: 2rem;
+    background-color: var(--card-background);
+    border-radius: var(--rounded-corners);
+}
+
+.offer-section{
+    display: flex;
+    gap: 2rem;
+}
+
+.offer-card, .feature-card {
+    width: 50%;
+}
+
 
 
 /*Room showcase section*/
-.room-showcase {
-    margin: 2rem;
-    
-}
+
 
 .card-header {
     margin-top: 0;
     margin-bottom: 1rem;
     font-weight: 600;
-    color: var(--regatta);
+    color: var(--feverish-pink);
 }
 
-.room-card, .booking-section{
+.room-card, .booking-section {
     margin-top: 2rem;
-    margin-bottom: 2rem;
-    height: 26rem;
+    height: 30rem;
     padding: 2rem;
     max-width: 2000px;
     border-radius: var(--rounded-corners);
     display: flex;
     justify-content: space-between;
     background-color: var(--card-background);
+}
+
+.room-info-wrapper {
+    width: 60%;
 }
 
 .room-img-container{
@@ -157,7 +183,6 @@ button:hover{
 /*Booking section*/
 .booking-section{
 height: 35rem;
-margin: 2rem;
 gap: 2rem
 }
 
@@ -190,8 +215,7 @@ form{
 /*Footer styling*/
 footer {
     background-color: var(--regatta);
-    padding: 20px;
-    margin-top: 20px;
+    padding: 2rem;
     text-align: center;
 }
 
