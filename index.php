@@ -16,8 +16,13 @@ require_once __DIR__ . '/app/database/database.php';
 <main>
 
     <section class="about-section card" id="about-section">
-        <h2 class="card-header">About Mos'Le'Harmless</h2>
-        <p>Located in the stunning Yrgopelago, Mos'Le'Harmless offers a unique balance between comfort and adventure. Our accommodations are designed to provide a Mos'Le'safe haven from the local wildlife while ensuring you have an unforgettable experience. Whether you're here for relaxation or exploration, our friendly staff and top-notch facilities are here to make your stay exceptional.</p>
+        <div class="about-wrapper">
+            <h2 class="card-header">About Mos'Le'Harmless</h2>
+            <p>Located in the stunning Yrgopelago, Mos'Le'Harmless offers a unique balance between comfort and adventure. Our accommodations are designed to provide a Mos'Le'safe haven from the local wildlife while ensuring you have an unforgettable experience. Whether you're here for relaxation or exploration, our friendly staff and top-notch facilities are here to make your stay exceptional.</p>
+        </div>
+        <div class="about-img-container">
+            <img src="./images/about-image.jpg" alt="About Us Image" class="about-image">
+        </div>
     </section>
 
     <section class="offer-section card" id="offer-section">
@@ -27,6 +32,9 @@ require_once __DIR__ . '/app/database/database.php';
             <p>Just use the same name and API-KEY to automatically receive your discount at booking!</p>
             <b>Returning guest discount of <?= $returningGuestDiscount ?>$ on bookings of <?= $minimumBookingForDiscount ?>$ or more!</b>
         </div>
+
+        <div class="v-line-black"></div>
+
         <div class="feature-card">
             <h2 class="card-header">Book exclusive features!</h2>
             <p>Enhance your stay with our exclusive add-ons and personalized services designed to make your experience truly memorable. Add as many features as you like to customize your visit.</p>
@@ -94,10 +102,15 @@ require_once __DIR__ . '/app/database/database.php';
     </section>
 
     <section class="booking-section card" id="booking-section">
-        <?php
-        require_once __DIR__ . '/booking-form.php';
-        require_once __DIR__ . '/app/calendar/calendar.php';
-        ?>
+        <h2 class="card-header">Book Your Stay</h2>
+        <p>Use the form below to book your stay at Mos'Le'Harmless. Select your room type, arrival and departure dates, and any additional features you'd like to include in your booking.</p>
+        <p>Use the caledar to select an arrival date. Dates marked as "Booked" are unavailable for selection.</p>
+        <div class="booking-wrapper">
+            <?php
+            require_once __DIR__ . '/booking-form.php';
+            require_once __DIR__ . '/app/calendar/calendar.php';
+            ?>
+        </div>
     </section>
 </main>
 

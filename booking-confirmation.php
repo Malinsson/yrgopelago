@@ -31,7 +31,7 @@ unset($_SESSION['bookingData']);
         </div>
 
         <h3>Receipt Details:</h3>
-        <pre class="receipt-json"><?php echo json_encode($receiptForDisplay, JSON_PRETTY_PRINT); ?></pre>
+        <pre class="receipt-json"><?= json_encode($receiptForDisplay, JSON_PRETTY_PRINT); ?></pre>
 
         <button onclick="window.location.href='index.php'" class="btn-primary">Go Back Home</button>
     </section>
