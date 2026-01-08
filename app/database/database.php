@@ -90,3 +90,16 @@ function insertGuest(PDO $database, string $name): void
     $insertGuest->bindParam(':name', $name);
     $insertGuest->execute();
 }
+
+function changeRoomPrices(PDO $database, int $budgetPrice, int $standardPrice, int $luxuryPrice): void
+{
+    $updatePrices = $database->prepare("UPDATE rooms SET price_per_night = CASE id 
+        WHEN 1 THEN :budget 
+        WHEN 2 THEN :standard 
+        WHEN 3 THEN :luxury
+        END");
+    $updatePrices->bindParam(':budget', $budgetPrice);
+    $updatePrices->bindParam(':standard', $standardPrice);
+    $updatePrices->bindParam(':luxury', $luxuryPrice);
+    $updatePrices->execute();
+}
