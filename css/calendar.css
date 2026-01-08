@@ -17,7 +17,8 @@
     padding: 20px;
     text-align: center;
     text-transform: uppercase;
-    background: var(--calypso)
+    background: var(--regatta);
+    color: white;
 }
 
 .calendar-header th {
@@ -110,3 +111,17 @@
     color: white !important;
 }
 
+.legend, .legend-item {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.legend-item {
+    gap: 1rem;
+}
+
+.legend-color {
+    height: 1.5rem;
+    width: 1.5rem;
+}

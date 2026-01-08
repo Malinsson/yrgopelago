@@ -109,9 +109,26 @@ require_once __DIR__ . '/views/header.php';
         <div class="booking-wrapper">
             <?php
             require_once __DIR__ . '/booking-form.php';
-            require_once __DIR__ . '/app/calendar/calendar.php';
             ?>
-        </div>
+            <div id="calendar-wrapper">
+                <?php
+                require_once __DIR__ . '/app/calendar/calendar.php';
+                ?>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color booked"></div>
+                        <p>Booked</p>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color calendar-selected"></div>
+                        <p>Arrival Date</p>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color calendar-departure"></div>
+                        <p>Departure Date</p>
+                    </div>
+                </div>
+            </div>
     </section>
 </main>
 
