@@ -55,7 +55,7 @@ require_once __DIR__ . '/views/header.php';
                 </ul>
                 <small class="disclaimer-text">*Sea view window technology may not be effective in all weather conditions. By booking this room we disclaim any liability for dissatisfaction.</small>
                 <p class="room-price"><?= getRoomPrice($database, 1)  ?>$ per night</p>
-                <button class="to-booking budget" id="book-1">Book Now</button>
+                <button type="button" href="#booking-section" class="to-booking budget" id="book-1">Book Now</button>
             </div>
             <div class="room-img-container">
                 <img src="./images/room1.jpg" alt="Budget Room" class="room-image">
@@ -74,7 +74,7 @@ require_once __DIR__ . '/views/header.php';
                 </ul>
                 <small class="disclaimer-text">*All-inclusive meals do not include alchohol. By booking this room we disclaim any liability for dissatisfaction.</small>
                 <p class="room-price"><?= getRoomPrice($database, 2)  ?>$ per night</p>
-                <button class="to-booking premium" id="book-2">Book Now</button>
+                <button type="button" href="#booking-section" class="to-booking premium" id="book-2">Book Now</button>
             </div>
             <div class="room-img-container">
                 <img src="./images/room2.jpg" alt="Premium Room" class="room-image">
@@ -93,7 +93,7 @@ require_once __DIR__ . '/views/header.php';
                 </ul>
                 <small class="disclaimer-text">This room may be too comfortable for some guests looking for a true Mos'Le'Comfortable experience.</small>
                 <p class="room-price"><?= getRoomPrice($database, 3)  ?>$ per night</p>
-                <button class="to-booking luxury" id="book-3">Book Now</button>
+                <button type="button" href="#booking-section" class="to-booking luxury" id="book-3">Book Now</button>
 
             </div>
             <div class="room-img-container">
