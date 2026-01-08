@@ -2,19 +2,25 @@
 
 declare(strict_types=1);
 
-use Dotenv\Dotenv;
+require_once __DIR__ . '/app/autoload.php';
 
-require_once __DIR__ . '/vendor/autoload.php';
-require_once __DIR__ . '/functions.php';
-require_once __DIR__ . '/app/database/database.php';
-require_once __DIR__ . '/features.php';
+use Dotenv\Dotenv;
 
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->safeLoad();
 
 $envApiKey = $_ENV['API_KEY'] ?? $_ENV['api_key'] ?? null;
 
-
+// Helper function to redirect with error
+function redirectWithError($message, $details = null)
+{
+    $_SESSION['bookingError'] = [
+        'message' => $message,
+        'details' => $details
+    ];
+    header('Location: booking-error.php');
+    exit();
+}
 
 if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arrival-date'], $_POST['departure-date']) && $_POST['name'] !== '') {
     $name = clean($_POST['name']);
@@ -24,20 +30,14 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
     $departureDate = clean($_POST['departure-date']);
     $returningGuest = false;
 
-
     // Room availability check
     if ($roomId !== 0) {
         if (!roomAvailability($database, $roomId, $arrivalDate, $departureDate)) {
-?>
-            <p>Sorry, the selected room type is not available for the chosen dates. Please go back and select different dates or room type.</p>
-            <button onclick="window.location.href='index.php'">Go Back</button>
-        <?php exit();
+            redirectWithError('Sorry, the selected room type is not available for the chosen dates. Please select different dates or room type.');
         }
     }
 
-
     // Calculate total cost
-
     // Features cost calculation
     if (isset($_POST['features'])) {
         $features = $_POST['features'];
@@ -48,7 +48,7 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
     }
 
     // Room cost calculation
-    if ($roomType === "0") {
+    if ($roomId === 0) {
         $totalRoomPrice = 0;
     } else {
         $totalRoomPrice = getRoomPrice($database, $roomId) * calculateDays($arrivalDate, $departureDate);
@@ -56,20 +56,15 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
     $totalCost = $totalFeaturesPrice + $totalRoomPrice;
 
     if ($totalCost <= 0) {
-        ?>
-        <p>The total cost of your booking is $0. Please select a room type or features to proceed with the booking.</p>
-        <button onclick="window.location.href='index.php'">Go Back</button>
-    <?php
-        exit();
+        redirectWithError('The total cost of your booking is $0. Please select a room type or features to proceed with the booking.');
     }
 
 
     // Returning guest discount
-    if (returningGuest($database, $name) && $totalCost >= 3) {
+    if (returningGuest($database, $name) && $totalCost >= $minimumBookingForDiscount) {
         $returningGuest = true;
-        $totalCost -= 1;
+        $totalCost -= $returningGuestDiscount;
     }
-
 
     // Transfer code generation
     $client = new \GuzzleHttp\Client();
@@ -87,106 +82,91 @@ if (isset($_POST['name'], $_POST['api-key'], $_POST['room-type'], $_POST['arriva
         $response = $response->getBody()->getContents();
         $response = json_decode($response, true);
     } catch (Exception $e) {
-        //Catch doesn't always work??
-    ?>
-        <p>There was an error processing your request. Please try again later.</p>
-        <p><?= $e->getMessage() ?></p>
-        <button onclick="window.location.href='index.php'">Go Back</button>
-    <?php
-        exit();
+        redirectWithError('There was an error processing your request. Please try again later.', $e->getMessage());
     }
 
-    //Backup of above try-catch block
-    if ($response['status'] === 'error') {
-    ?>
-        <p>There was an error processing your request. Please try again later.</p>
-        <p> <?= $response['message'] ?> </p>
-        <button onclick="window.location.href='index.php'">Go Back</button>
-        <?php exit();
-    } else {
+    // Check for API errors
+    if (isset($response['status']) && $response['status'] === 'error') {
+        redirectWithError('There was an error processing your request. Please try again later.', $response['message'] ?? 'Unknown error');
+    }
 
-        // If transfer code generation was successful, proceed with booking
-        $transferCode = $response['transferCode'];
+    // Transfer code generation was successful, proceed with booking
+    $transferCode = $response['transferCode'];
 
-        $depositMoney = [
-            'form_params' => [
-                'user' => 'Malin',
-                'transferCode' => $transferCode,
+    // Create receipt
+    $featuresUsed = convertFeaturesToReceiptFormat($features, $featureGrid);
+
+    $receipt = [
+        'user' => 'Malin',
+        'api_key' => $envApiKey,
+        'guest_name' => $name,
+        'arrival_date' => $arrivalDate,
+        'departure_date' => $departureDate,
+        'features_used' => $featuresUsed,
+        'star_rating' => 2,
+    ];
+
+    try {
+        $receiptResponse = $client->POST('https://www.yrgopelag.se/centralbank/receipt', [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
             ],
-        ];
-
-        try {
-            $depositResponse = $client->POST('https://www.yrgopelag.se/centralbank/deposit', $depositMoney);
-            $depositResponse = $depositResponse->getBody()->getContents();
-            $depositResponse = json_decode($depositResponse, true);
-        } catch (Exception $e) {
-        ?>
-            <p>There was an error processing your request. Please try again later.</p>
-            <p><?= $e->getMessage() ?></p>
-            <button onclick="window.location.href='index.php'">Go Back</button>
-        <?php exit();
-        }
-
-
-
-        $featuresUsed = convertFeaturesToReceiptFormat($features, $featureGrid);
-
-        $receipt = [
-            'user' => 'Malin',
-            'api_key' => $envApiKey,
-            'guest_name' => $name,
-            'arrival_date' => $arrivalDate,
-            'departure_date' => $departureDate,
-            'features_used' => $featuresUsed,
-            'star_rating' => 2,
-        ];
-
-
-        try {
-            $receiptResponse = $client->POST('https://www.yrgopelag.se/centralbank/receipt', [
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json',
-                ],
-                'json' => $receipt,
-            ]);
-            $receiptResponse = $receiptResponse->getBody()->getContents();
-            $receiptResponse = json_decode($receiptResponse, true);
-            var_dump($receipt) ?>
-            <p>Booking successful! Your receipt is: <?= $receiptResponse['receipt_id'] ?></p>
-            <button onclick="window.location.href='index.php'">Go Back</button>
-        <?php
-
-
-
-        } catch (Exception $e) {
-        ?>
-            <p>There was an error processing your request. Please try again later.</p>
-            <p><?= $e->getMessage() ?></p>
-            <button onclick="window.location.href='index.php'">Go Back</button>
-<?php
-            exit();
-        }
-
-        // Insert guest if new guest
-        if (!$returningGuest) {
-            insertGuest($database, $name);
-        }
-
-        $guestId = getGuestId($database, $name);
-
-        // Insert reservation into database
-        insertReservation($database, $guestId, $roomId, $arrivalDate, $departureDate);
-        $reservationId = (int)$database->lastInsertId();
-
-        // Insert booked features into database
-        if (!empty($features)) {
-            foreach ($features as $feature) {
-                $featureId = getFeatureIdByName($database, $feature);
-                $featurePrice = getFeaturePriceByName($database, $feature);
-                insertBookedFeatures($database, $reservationId, $featureId, $featurePrice);
-            }
-        }
-        insertPayment($database, $reservationId, $totalCost, $transferCode, 'paid');
+            'json' => $receipt,
+        ]);
+        $receiptResponse = $receiptResponse->getBody()->getContents();
+        $receiptResponse = json_decode($receiptResponse, true);
+    } catch (Exception $e) {
+        redirectWithError('There was an error processing your receipt. Please try again later.', $e->getMessage());
     }
+
+    // Deposit money
+    $depositMoney = [
+        'form_params' => [
+            'user' => 'Malin',
+            'transferCode' => $transferCode,
+        ],
+    ];
+
+    try {
+        $depositResponse = $client->POST('https://www.yrgopelag.se/centralbank/deposit', $depositMoney);
+        $depositResponse = $depositResponse->getBody()->getContents();
+        $depositResponse = json_decode($depositResponse, true);
+    } catch (Exception $e) {
+        redirectWithError('There was an error processing your deposit. Please try again later.', $e->getMessage());
+    }
+
+    // Insert guest if new guest
+    if (!returningGuest($database, $name)) {
+        insertGuest($database, $name);
+    }
+
+    $guestId = getGuestId($database, $name);
+
+    // Insert reservation into database
+    insertReservation($database, $guestId, $roomId, $arrivalDate, $departureDate);
+    $reservationId = (int)$database->lastInsertId();
+
+    // Insert booked features into database
+    if (!empty($features)) {
+        foreach ($features as $feature) {
+            $featureId = getFeatureIdByName($database, $feature);
+            $featurePrice = getFeaturePriceByName($database, $feature);
+            insertBookedFeatures($database, $reservationId, $featureId, $featurePrice);
+        }
+    }
+
+    // Insert payment into database
+    insertPayment($database, $reservationId, $totalCost, $transferCode, 'paid');
+
+    // Store booking data in session and redirect to confirmation page
+    $_SESSION['bookingData'] = [
+        'success' => true,
+        'receipt' => $receipt,
+        'receiptResponse' => $receiptResponse,
+        'totalCost' => $totalCost,
+    ];
+
+    header('Location: booking-confirmation.php');
+    exit();
 }

@@ -1,5 +1,5 @@
 <footer>
-    <p>&copy; 2024 Yrgopelago</p>
+    <p>&copy; 2026 Malinsson</p>
 </footer>
 
 <script src="./app/app.js"></script>

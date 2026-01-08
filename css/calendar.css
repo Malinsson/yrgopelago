@@ -6,6 +6,7 @@
     background: #dfe4e6;
     color: #000000;
     width: 100%;
+    aspect-ratio: 1;
     font-family: 'Oxygen';
     table-layout: fixed;
 }
@@ -16,7 +17,8 @@
     padding: 20px;
     text-align: center;
     text-transform: uppercase;
-    background: rgba(0, 0, 0, 0.05);
+    background: var(--regatta);
+    color: white;
 }
 
 .calendar-header th {
@@ -56,7 +58,7 @@
 .calendar tbody tr td.mask-start,
 .calendar tbody tr td.mask,
 .calendar tbody tr td.mask-end {
-    background: #C23B22;
+    background: var(--regatta);
 }
 
 .calendar .cal-weekview-time {
@@ -95,12 +97,12 @@
 }
 
 .calendar-selected {
-    background-color: green !important;
+    background-color: var(--feverish-pink) !important;
     color: white !important;
 }
 
 .calendar-departure {
-    background-color: #ff9800 !important;
+    background-color: var(--calypso) !important;
     color: white !important;
 }
 
@@ -109,11 +111,17 @@
     color: white !important;
 }
 
-@media screen and (max-width:768px) {
-    .weekly-calendar-container {
-        display: block;
-        overflow-x: scroll;
-        overflow-y: hidden;
-        white-space: nowrap;
-    }
+.legend, .legend-item {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.legend-item {
+    gap: 1rem;
+}
+
+.legend-color {
+    height: 1.5rem;
+    width: 1.5rem;
 }

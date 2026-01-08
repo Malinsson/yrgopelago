@@ -1,37 +1,12 @@
 :root{
-    --background-color: #57c1e9;
     --card-background: #e3e3e3b3;
+    --feverish-pink: #D4384E;
+    --calypso: #31A9C1;
+    --regatta: #2B5474;
+    --lime-ricky: #A9C16B;
+    --vivacious-pink: #E186A7;
     --rounded-corners: 0.5rem;
-}
-
-.mukta-malar-light {
-  font-family: "Mukta Malar", sans-serif;
-  font-weight: 300;
-  font-style: normal;
-}
-
-.mukta-malar-medium {
-  font-family: "Mukta Malar", sans-serif;
-  font-weight: 500;
-  font-style: normal;
-}
-
-.mukta-malar-semibold {
-  font-family: "Mukta Malar", sans-serif;
-  font-weight: 600;
-  font-style: normal;
-}
-
-.mukta-malar-bold {
-  font-family: "Mukta Malar", sans-serif;
-  font-weight: 700;
-  font-style: normal;
-}
-
-.mukta-malar-extrabold {
-  font-family: "Mukta Malar", sans-serif;
-  font-weight: 800;
-  font-style: normal;
+    --drop-shadow: 
 }
 
 *{
@@ -42,98 +17,168 @@
 }
 
 body{
-    background-color: var(--background-color);
+    margin: 0;
+    background-image: linear-gradient(45deg, #31a9c175,  var(--calypso), var(--regatta));
+}
+
+main {
+    padding: 0rem 2rem 2rem 2rem;
+}
+
+b{
+    font-weight: bold;
+}
+
+/*Hero image styling*/
+h1 {
+    font-weight: 700;
+    font-size: 5rem;
     margin: 0;
 }
 
-header {
-    background-color: var(--card-background);
-    display: flex;
-    padding: 1rem 2rem 1rem 2rem;
+.overlay {
+    color: white;
+    position: absolute;
+    padding: 3rem;
+    
 }
 
-h2 {
-    font-size: 2rem;
-}
-
-.v-line{
-    border: 1px solid black;
-    height: 100px;
-    margin-left: 1rem;
-}
-
-.navbar, h2{
-    margin: 0;
-    list-style: none;
-    padding: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 2rem
-}
-
-.navbar li{
+.hero-subtitle {
     font-size: 1.5rem;
-    padding: 1rem;
+    font-weight: 500;
+    margin-top: 3rem;
+
 }
 
-.navbar li:hover{
-    background-color: #666;
-}
-
-a {
-    text-decoration: none;
-    color: black;
+.hero-container{
+    position: relative;
+    
 }
 
 .hero-container, .room-card, header{
     width: 100%;
 }
 
-.hero-image, .room-image{
+.hero-image, .room-image, .overlay, .about-image{
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.room-showcase {
-    margin: 2rem;
+/*About and offer section*/
+.about-section, .offer-section {
+    padding: 2rem;
+    margin-top: 2rem;
+    background-color: var(--card-background);
+    border-radius: var(--rounded-corners);
+}
+
+.about-section {
+    display: flex;
+    gap: 5rem;
+}
+
+.about-wrapper{
+    width: 60%;
+    font-size: 1rem;
+}
+
+.about-img-container{
+    width: 40%;
+}
+
+.v-line-black{
+    border: 1px solid black;
+    height: 15rem;
+    margin: 0;
+}
+
+.offer-section{
+    display: flex;
+    gap: 2rem;
+}
+
+.offer-card, .feature-card {
+    width: 50%;
+}
+
+
+
+/*Room showcase section*/
+
+
+.card-header {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    color: var(--feverish-pink);
+}
+
+.room-card {
+    display: flex;
+    justify-content: space-between;
+    height: 30rem;
+    gap: 2rem;
 
 }
 
-.room-card, .booking-section{
+.room-card, .booking-section {
     margin-top: 2rem;
-    margin-bottom: 2rem;
-    height: 26rem;
     padding: 2rem;
     max-width: 2000px;
     border-radius: var(--rounded-corners);
-    display: flex;
-    justify-content: space-between;
     background-color: var(--card-background);
+}
+
+.room-info-wrapper {
+    width: 60%;
 }
 
 .room-img-container{
     width: 40%;
 }
 
-.room-image{
+.room-image, .about-image{
     border-radius: var(--rounded-corners);
 }
 
+button {
+    background-color: var(--feverish-pink);
+    cursor: pointer;
+    border: 0px;
+    border-radius: var(--rounded-corners);
+    padding: 0.5rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    color: white;
+}
+
+button:hover{
+    background-color:#9b1f30;
+    box-shadow: 0px 2px 8px 0px var(--feverish-pink);
+}
+
+
+
+/*Booking section*/
 .booking-section{
-height: 35rem;
-margin: 2rem;
 gap: 2rem
+}
+
+.booking-wrapper{
+    display: flex;
+    gap: 2rem;    
 }
 
 form{
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    width: 50%;
 }
 
 #calendar-container{
-    width: 55rem;
+    width: 40rem;
 }
 
 .date-wrapper {
@@ -150,15 +195,16 @@ form{
     width: 100%;
 }
 
+
+
+/*Footer styling*/
 footer {
-    background-color: #f0f0f0;
-    padding: 20px;
-    margin-top: 20px;
+    background-color: var(--regatta);
+    padding: 2rem;
     text-align: center;
-    border-top: 1px solid #ddd;
 }
 
 footer p {
     margin: 0;
-    color: #666;
+    color: var(--card-background);
 }

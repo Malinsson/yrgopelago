@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/app/database/database.php';
-require_once __DIR__ . '/functions.php';
-require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/app/autoload.php';
 
 use Dotenv\Dotenv;
 
@@ -36,10 +34,10 @@ function getAllFeaturesFromApi($envApiKey): array
 
 $featureGrid = searchAllFeatures($database);
 
-function insertNewFeaturesIntoDatabase(PDO $database, string $category, string $tier, string $feature, int $basePrice): void
+function insertNewFeaturesIntoDatabase(PDO $database, string $activity, string $tier, string $feature, int $basePrice): void
 {
-    $insertFeature = $database->prepare("INSERT INTO features (category, tier, feature, base_price) VALUES (:category, :tier, :feature, :base_price)");
-    $insertFeature->bindParam(':category', $category);
+    $insertFeature = $database->prepare("INSERT INTO features (activity, tier, feature, base_price) VALUES (:activity, :tier, :feature, :base_price)");
+    $insertFeature->bindParam(':activity', $activity);
     $insertFeature->bindParam(':tier', $tier);
     $insertFeature->bindParam(':feature', $feature);
     $insertFeature->bindParam(':base_price', $basePrice);
@@ -49,15 +47,34 @@ function insertNewFeaturesIntoDatabase(PDO $database, string $category, string $
 
 function displayFeaturesCheckboxes(array $featureGrid): void
 {
-    foreach ($featureGrid as $index => $feature) {
-        $featureId = $feature['id'];
-        $activity = toUppercase($feature['activity']);
-        $tier = toUppercase($feature['tier']);
-        $featureName = toUppercase($feature['feature']);
-        $price = $feature['base_price'] ?>
-        <input type="checkbox" name="features[]" value="<?= $featureName ?>"></input>
-        <label for="<?= $featureName ?>"> <?= $featureName ?> Cost: <?= $price ?>$</label>
-<?php }
+    $featuresByTier = [];
+    foreach ($featureGrid as $feature) {
+        $tier = $feature['tier'];
+        if (!isset($featuresByTier[$tier])) {
+            $featuresByTier[$tier] = [];
+        }
+        $featuresByTier[$tier][] = $feature;
+    }
+
+    foreach ($featuresByTier as $tier => $features) {
+        $tierLabel = toUppercase($tier);
+?>
+        <fieldset>
+            <legend><?= $tierLabel ?></legend>
+            <?php foreach ($features as $feature) {
+                $featureId = $feature['id'];
+                $activity = toUppercase($feature['activity']);
+                $featureName = toUppercase($feature['feature']);
+                $originalFeatureName = $feature['feature']; // Keep original for price lookup
+                $price = $feature['base_price'];
+            ?>
+                <input type="checkbox" id="feature-<?= $featureId ?>" name="features[]" value="<?= $originalFeatureName ?>">
+                <label for="feature-<?= $featureId ?>"><?= $featureName ?> - <?= $activity ?> - $<?= $price ?></label>
+                <br>
+            <?php } ?>
+        </fieldset>
+<?php
+    }
 }
 
 function getFeaturePriceTotal(array $selectedFeatures, array $featureGrid): int
@@ -73,18 +90,18 @@ function getFeaturePriceTotal(array $selectedFeatures, array $featureGrid): int
     return $totalFeaturesPrice;
 }
 
-function updateFeaturePrices(PDO $database, int $basicPrice, int $standardPrice, int $premiumPrice, int $superiorPrice): void
+function updateFeaturePrices(PDO $database, int $economyPrice, int $basicPrice, int $premiumPrice, int $superiorPrice): void
 {
     $updatePrices = $database->prepare("UPDATE features SET base_price = CASE tier 
-        WHEN 'basic' THEN :basic_price 
-        WHEN 'standard' THEN :standard_price 
-        WHEN 'premium' THEN :premium_price 
-        WHEN 'superior' THEN :superior_price 
+        WHEN 'economy' THEN :economy 
+        WHEN 'basic' THEN :basic 
+        WHEN 'premium' THEN :premium
+        WHEN 'superior' THEN :superior
         END");
-    $updatePrices->bindParam(':basic_price', $basicPrice);
-    $updatePrices->bindParam(':standard_price', $standardPrice);
-    $updatePrices->bindParam(':premium_price', $premiumPrice);
-    $updatePrices->bindParam(':superior_price', $superiorPrice);
+    $updatePrices->bindParam(':economy', $economyPrice, PDO::PARAM_INT);
+    $updatePrices->bindParam(':basic', $basicPrice, PDO::PARAM_INT);
+    $updatePrices->bindParam(':premium', $premiumPrice, PDO::PARAM_INT);
+    $updatePrices->bindParam(':superior', $superiorPrice, PDO::PARAM_INT);
     $updatePrices->execute();
 }
 
@@ -117,6 +134,15 @@ function getFeaturePriceByName(PDO $database, string $featureName): ?int
 {
     $getFeaturePrice = $database->prepare("SELECT base_price FROM features WHERE feature = :feature");
     $getFeaturePrice->bindParam(':feature', $featureName);
+    $getFeaturePrice->execute();
+    $featureData = $getFeaturePrice->fetch(PDO::FETCH_ASSOC);
+    return $featureData ? (int)$featureData['base_price'] : null;
+}
+
+function getFeaturePriceByTier(PDO $database, string $tier): ?int
+{
+    $getFeaturePrice = $database->prepare("SELECT base_price FROM features WHERE tier = :tier LIMIT 1");
+    $getFeaturePrice->bindParam(':tier', $tier);
     $getFeaturePrice->execute();
     $featureData = $getFeaturePrice->fetch(PDO::FETCH_ASSOC);
     return $featureData ? (int)$featureData['base_price'] : null;

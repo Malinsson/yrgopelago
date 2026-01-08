@@ -1,3 +1,15 @@
+//Login display script
+const loginButton = document.getElementById('admin-login');
+const loginForm = document.getElementById('admin-login-form');
+if (loginButton) {
+    loginButton.addEventListener('click', function() {
+        loginForm.classList.toggle('hidden');
+    });
+}
+
+
+
+
 // Script to handle dynamic booking form functionality
 function initializeBookingForm(roomPrices, featurePrices) {
     const arrivalDateInput = document.getElementById('arrival-date');
@@ -20,12 +32,11 @@ function initializeBookingForm(roomPrices, featurePrices) {
     //Check selected features and calculate their total price
     function calculateFeaturesTotalPrice() {
         let featuresTotal = 0;
-        featureCheckboxes.forEach(checkbox => {
-            if (checkbox.checked) {
-                const featureName = checkbox.value;
-                if (featurePrices[featureName] !== undefined) {
-                    featuresTotal += featurePrices[featureName];
-                }
+        const allCheckboxes = document.querySelectorAll('input[name="features[]"]:checked');
+        allCheckboxes.forEach(checkbox => {
+            const featureName = checkbox.value;
+            if (featurePrices[featureName] !== undefined) {
+                featuresTotal += featurePrices[featureName];
             }
         });
         return featuresTotal;

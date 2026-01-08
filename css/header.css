@@ -1,0 +1,71 @@
+/*Header stydling*/
+header {
+    background-color: var(--regatta);
+    display: flex;
+    padding: 1rem 2rem 1rem 2rem;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    position: relative;
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+.v-line{
+    border: 1px solid white;
+    height: 100px;
+    margin-left: 1rem;
+}
+
+.navbar, .header-name{
+    color: white;
+    margin: 0;
+    list-style: none;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem
+}
+
+.navbar li{
+    font-size: 1.5rem;
+    padding: 1rem;
+
+}
+
+.navbar li:hover{
+    background-color: var(--feverish-pink);
+    border-radius: var(--rounded-corners);
+}
+
+header nav li a {
+    text-decoration: none;
+    color: white;
+
+}
+
+/*Login sttyling*/
+.hidden{
+    display: none;
+}
+
+#admin-login{
+    cursor: pointer;
+}
+
+#admin-login-form{
+    position: absolute;
+    z-index: 10;
+    width: 20rem;
+    padding: 2rem;
+    border-radius: var(--rounded-corners);
+    top: 8rem;
+    right: 1rem;
+    background-color: var(--regatta);
+    color: white;
+}

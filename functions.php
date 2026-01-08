@@ -2,8 +2,15 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/app/database/database.php';
+require_once __DIR__ . '/app/autoload.php';
 
+
+//Variabels that can be used in index.php and other files
+$returningGuestDiscount = 1;
+$minimumBookingForDiscount = 3;
+
+
+// Common functions used across the application
 function clean(string $data): string
 {
     return htmlspecialchars(stripslashes(trim($data)));
@@ -39,7 +46,7 @@ function getRoomId(string $roomType): ?int
 {
     if ($roomType === "budget") {
         return 1;
-    } elseif ($roomType === "standard") {
+    } elseif ($roomType === "premium") {
         return 2;
     } elseif ($roomType === "luxury") {
         return 3;
