@@ -11,15 +11,16 @@ $dotenv->safeLoad();
 
 $envApiKey = $_ENV['API_KEY'] ?? $_ENV['api_key'] ?? null;
 
-$currestBasicPrice = getFeaturePriceByTier($database, 'basic');
 $currestEconomyPrice = getFeaturePriceByTier($database, 'economy');
+$currestBasicPrice = getFeaturePriceByTier($database, 'basic');
 $currestPremiumPrice = getFeaturePriceByTier($database, 'premium');
 $currestSuperiorPrice = getFeaturePriceByTier($database, 'superior');
 
 $errors = [];
 $successMessages = [];
 
-if (!isset($_SESSION['adminLoggedIn']) && $_SESSION['adminLoggedIn'] !== true) {
+// Admin authentication check
+if (!isset($_SESSION['adminLoggedIn']) || $_SESSION['adminLoggedIn'] !== true) {
     header('Location: index.php');
     exit();
 }
@@ -47,14 +48,14 @@ if (isset($_POST['getFeatures'])) {
 }
 
 if (isset($_POST['changePrices'])) {
-    $basicPrice = isset($_POST['basic-price']) ? (int)$_POST['basic-price'] : $currestBasicPrice;
     $economyPrice = isset($_POST['economy-price']) ? (int)$_POST['economy-price'] : $currestEconomyPrice;
+    $basicPrice = isset($_POST['basic-price']) ? (int)$_POST['basic-price'] : $currestBasicPrice;
     $premiumPrice = isset($_POST['premium-price']) ? (int)$_POST['premium-price'] : $currestPremiumPrice;
     $superiorPrice = isset($_POST['superior-price']) ? (int)$_POST['superior-price'] : $currestSuperiorPrice;
 
     //Safety check to ensure prices are greater than 0
-    if ($basicPrice > 0 && $economyPrice > 0 && $premiumPrice > 0 && $superiorPrice > 0) {
-        updateFeaturePrices($database, $basicPrice, $economyPrice, $premiumPrice, $superiorPrice);
+    if ($economyPrice > 0 && $basicPrice > 0 && $premiumPrice > 0 && $superiorPrice > 0) {
+        updateFeaturePrices($database, $economyPrice, $basicPrice, $premiumPrice, $superiorPrice);
         $successMessages[] = 'Feature prices have been successfully updated.';
     } else {
         $errors[] = 'Error: All prices must be greater than 0.';
@@ -91,10 +92,10 @@ require_once __DIR__ . '/views/header.php';
 
         <p>Change price of features</p>
         <form method="post" action="">
+            <label for="economy-price">Economy</label>
+            <input type="number" id="economy-price" name="economy-price" placeholder="<?= $currestEconomyPrice ?>" min="1" required>
             <label for="basic-price">Basic</label>
             <input type="number" id="basic-price" name="basic-price" placeholder="<?= $currestBasicPrice ?>" min="1" required>
-            <label for="economy-price">Standard</label>
-            <input type="number" id="economy-price" name="economy-price" placeholder="<?= $currestEconomyPrice ?>" min="1" required>
             <label for="premium-price">Premium</label>
             <input type="number" id="premium-price" name="premium-price" placeholder="<?= $currestPremiumPrice ?>" min="1" required>
             <label for="superior-price">Superior</label>

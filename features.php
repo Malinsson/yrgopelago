@@ -71,18 +71,18 @@ function getFeaturePriceTotal(array $selectedFeatures, array $featureGrid): int
     return $totalFeaturesPrice;
 }
 
-function updateFeaturePrices(PDO $database, int $basicPrice, int $economyPrice, int $premiumPrice, int $superiorPrice): void
+function updateFeaturePrices(PDO $database, int $economyPrice, int $basicPrice, int $premiumPrice, int $superiorPrice): void
 {
     $updatePrices = $database->prepare("UPDATE features SET base_price = CASE tier 
-        WHEN 'basic' THEN :basic 
         WHEN 'economy' THEN :economy 
+        WHEN 'basic' THEN :basic 
         WHEN 'premium' THEN :premium
         WHEN 'superior' THEN :superior
         END");
-    $updatePrices->bindParam(':basic', $basicPrice);
-    $updatePrices->bindParam(':economy', $economyPrice);
-    $updatePrices->bindParam(':premium', $premiumPrice);
-    $updatePrices->bindParam(':superior', $superiorPrice);
+    $updatePrices->bindParam(':economy', $economyPrice, PDO::PARAM_INT);
+    $updatePrices->bindParam(':basic', $basicPrice, PDO::PARAM_INT);
+    $updatePrices->bindParam(':premium', $premiumPrice, PDO::PARAM_INT);
+    $updatePrices->bindParam(':superior', $superiorPrice, PDO::PARAM_INT);
     $updatePrices->execute();
 }
 
