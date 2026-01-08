@@ -1,7 +1,5 @@
 <?php
-require_once __DIR__ . '/functions.php';
-require_once __DIR__ . '/features.php';
-require_once __DIR__ . '/app/database/database.php';
+require_once __DIR__ . '/app/autoload.php';
 
 $roomsData = searchAllRooms($database);
 $roomPrices = [

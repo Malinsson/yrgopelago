@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/app/database/database.php';
+require_once __DIR__ . '/app/autoload.php';
 
 
 //Variabels that can be used in index.php and other files

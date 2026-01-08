@@ -1,6 +1,4 @@
 <?php
-session_start();
-
 require_once __DIR__ . '/views/header.php';
 
 if (!isset($_SESSION['bookingData']) || !$_SESSION['bookingData']['success']) {

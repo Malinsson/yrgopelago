@@ -1,7 +1,6 @@
 <?php
-session_start();
 
-require 'vendor/autoload.php';
+require_once __DIR__ . '/../app/autoload.php';
 
 
 use Dotenv\Dotenv;
@@ -37,6 +36,23 @@ try {
                 <li><a href="#room-showcase">Rooms</a></li>
                 <li><a href="#booking-section">Booking</a></li>
             </ul>
+
+            <ul class="navbar admin-nav">
+                <?php if (!isset($_SESSION['adminLoggedIn']) || $_SESSION['adminLoggedIn'] !== true) { ?>
+                    <li id="admin-login">Admin Login</li>
+                <?php } else { ?>
+                    <li><a href="admin/logout.php">Logout</a></li>
+                <?php } ?>
+            </ul>
         </nav>
+
+
+        <form method="post" action="admin/login.php" id="admin-login-form" class="hidden">
+            <label for="user">Username:</label>
+            <input type="text" id="user" name="user" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit" name="login" value="1">Login as Admin</button>
+        </form>
 
     </header>
