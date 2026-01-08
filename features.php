@@ -47,15 +47,34 @@ function insertNewFeaturesIntoDatabase(PDO $database, string $activity, string $
 
 function displayFeaturesCheckboxes(array $featureGrid): void
 {
-    foreach ($featureGrid as $index => $feature) {
-        $featureId = $feature['id'];
-        $activity = toUppercase($feature['activity']);
-        $tier = toUppercase($feature['tier']);
-        $featureName = toUppercase($feature['feature']);
-        $price = $feature['base_price'] ?>
-        <input type="checkbox" name="features[]" value="<?= $featureName ?>"></input>
-        <label for="<?= $featureName ?>"> <?= $featureName ?> Cost: <?= $price ?>$</label>
-<?php }
+    $featuresByTier = [];
+    foreach ($featureGrid as $feature) {
+        $tier = $feature['tier'];
+        if (!isset($featuresByTier[$tier])) {
+            $featuresByTier[$tier] = [];
+        }
+        $featuresByTier[$tier][] = $feature;
+    }
+
+    foreach ($featuresByTier as $tier => $features) {
+        $tierLabel = toUppercase($tier);
+?>
+        <fieldset>
+            <legend><?= $tierLabel ?></legend>
+            <?php foreach ($features as $feature) {
+                $featureId = $feature['id'];
+                $activity = toUppercase($feature['activity']);
+                $featureName = toUppercase($feature['feature']);
+                $originalFeatureName = $feature['feature']; // Keep original for price lookup
+                $price = $feature['base_price'];
+            ?>
+                <input type="checkbox" id="feature-<?= $featureId ?>" name="features[]" value="<?= $originalFeatureName ?>">
+                <label for="feature-<?= $featureId ?>"><?= $featureName ?> - <?= $activity ?> - $<?= $price ?></label>
+                <br>
+            <?php } ?>
+        </fieldset>
+<?php
+    }
 }
 
 function getFeaturePriceTotal(array $selectedFeatures, array $featureGrid): int

@@ -32,12 +32,11 @@ function initializeBookingForm(roomPrices, featurePrices) {
     //Check selected features and calculate their total price
     function calculateFeaturesTotalPrice() {
         let featuresTotal = 0;
-        featureCheckboxes.forEach(checkbox => {
-            if (checkbox.checked) {
-                const featureName = checkbox.value;
-                if (featurePrices[featureName] !== undefined) {
-                    featuresTotal += featurePrices[featureName];
-                }
+        const allCheckboxes = document.querySelectorAll('input[name="features[]"]:checked');
+        allCheckboxes.forEach(checkbox => {
+            const featureName = checkbox.value;
+            if (featurePrices[featureName] !== undefined) {
+                featuresTotal += featurePrices[featureName];
             }
         });
         return featuresTotal;
