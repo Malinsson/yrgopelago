@@ -36,10 +36,10 @@ function getAllFeaturesFromApi($envApiKey): array
 
 $featureGrid = searchAllFeatures($database);
 
-function insertNewFeaturesIntoDatabase(PDO $database, string $category, string $tier, string $feature, int $basePrice): void
+function insertNewFeaturesIntoDatabase(PDO $database, string $activity, string $tier, string $feature, int $basePrice): void
 {
-    $insertFeature = $database->prepare("INSERT INTO features (category, tier, feature, base_price) VALUES (:category, :tier, :feature, :base_price)");
-    $insertFeature->bindParam(':category', $category);
+    $insertFeature = $database->prepare("INSERT INTO features (activity, tier, feature, base_price) VALUES (:activity, :tier, :feature, :base_price)");
+    $insertFeature->bindParam(':activity', $activity);
     $insertFeature->bindParam(':tier', $tier);
     $insertFeature->bindParam(':feature', $feature);
     $insertFeature->bindParam(':base_price', $basePrice);
@@ -76,15 +76,15 @@ function getFeaturePriceTotal(array $selectedFeatures, array $featureGrid): int
 function updateFeaturePrices(PDO $database, int $basicPrice, int $standardPrice, int $premiumPrice, int $superiorPrice): void
 {
     $updatePrices = $database->prepare("UPDATE features SET base_price = CASE tier 
-        WHEN 'basic' THEN :basic_price 
-        WHEN 'standard' THEN :standard_price 
-        WHEN 'premium' THEN :premium_price 
-        WHEN 'superior' THEN :superior_price 
+        WHEN 'basic' THEN :basic 
+        WHEN 'standard' THEN :standard 
+        WHEN 'premium' THEN :premium
+        WHEN 'superior' THEN :superior
         END");
-    $updatePrices->bindParam(':basic_price', $basicPrice);
-    $updatePrices->bindParam(':standard_price', $standardPrice);
-    $updatePrices->bindParam(':premium_price', $premiumPrice);
-    $updatePrices->bindParam(':superior_price', $superiorPrice);
+    $updatePrices->bindParam(':basic', $basicPrice);
+    $updatePrices->bindParam(':standard', $standardPrice);
+    $updatePrices->bindParam(':premium', $premiumPrice);
+    $updatePrices->bindParam(':superior', $superiorPrice);
     $updatePrices->execute();
 }
 
@@ -117,6 +117,15 @@ function getFeaturePriceByName(PDO $database, string $featureName): ?int
 {
     $getFeaturePrice = $database->prepare("SELECT base_price FROM features WHERE feature = :feature");
     $getFeaturePrice->bindParam(':feature', $featureName);
+    $getFeaturePrice->execute();
+    $featureData = $getFeaturePrice->fetch(PDO::FETCH_ASSOC);
+    return $featureData ? (int)$featureData['base_price'] : null;
+}
+
+function getFeaturePriceByTier(PDO $database, string $tier): ?int
+{
+    $getFeaturePrice = $database->prepare("SELECT base_price FROM features WHERE tier = :tier LIMIT 1");
+    $getFeaturePrice->bindParam(':tier', $tier);
     $getFeaturePrice->execute();
     $featureData = $getFeaturePrice->fetch(PDO::FETCH_ASSOC);
     return $featureData ? (int)$featureData['base_price'] : null;
