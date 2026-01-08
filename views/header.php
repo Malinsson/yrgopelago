@@ -19,9 +19,10 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yrgopelago</title>
-    <link rel="stylesheet" href="./app/app.css">
+    <link rel="stylesheet" type="text/css" href="./app/app.css">
     <link rel="stylesheet" type="text/css" href="css/header.css">
     <link rel="stylesheet" type="text/css" href="css/calendar.css">
+    <link rel="stylesheet" type="text/css" href="css/tempPages.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Mukta+Malar:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">

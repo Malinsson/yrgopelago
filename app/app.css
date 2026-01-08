@@ -118,6 +118,7 @@ h1 {
     display: flex;
     justify-content: space-between;
     height: 30rem;
+    gap: 2rem;
 
 }
 

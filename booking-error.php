@@ -14,7 +14,7 @@ $error = $_SESSION['bookingError'];
 unset($_SESSION['bookingError']);
 ?>
 
-<main>
+<main class="error-page">
     <section class="booking-error card">
         <h2 class="card-header">Booking Error</h2>
 

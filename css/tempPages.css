@@ -1,0 +1,13 @@
+.booking-confirmation, .booking-error {
+    margin: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--card-background);
+    border-radius: var(--rounded-corners);
+}
+
+.error-page{
+    height: 100%;
+}
