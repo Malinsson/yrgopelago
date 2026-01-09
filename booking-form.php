@@ -23,7 +23,7 @@ $bookingData = [
 ?>
 
 
-<form method="post" action="process-booking.php">
+<form autocomplete="off" method="post" action="process-booking.php">
     <label for="name">Name:</label>
     <input type="text" id="name" name="name" required>
 
