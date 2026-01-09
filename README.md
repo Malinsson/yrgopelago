@@ -54,3 +54,14 @@ total_sum INTEGER NOT NULL,
 transfer_code VARCHAR NOT NULL,
 payment_status VARCHAR NOT NULL,
 FOREIGN KEY (reservation_id) REFERENCES reservations(id));
+
+# CODE REVIEW
+- In general: there are many files in the root of the project. Try to divide into subfolders for a cleaner structure.
+- index.php: good, semantic html. Next time, try to use more descriptive alt texts for the images, so that the content that the image shows is described in detail if the image is not visible for some reason.
+- index.php:45-103: Repetitive code, try to create arrays from your database and loop the information instead, to keep your code DRY and to get updates automatically. 
+- header.php:6-13: I can see in some other files where the header is not included that you need to write this code again. Keep these rows in autoload.php instead to keep your code DRY.
+- Functions in general: There seems to be several files where functions are declared. Keep them in a separate functions-folder to improve the structure.
+- functions.php:19-27: The functions “toUppercase” and “toLowercase” feels a bit unnecessary, the built in functions used inside the created functions do the same thing and can be used directly in the project
+- functions.php: 45-56: It works, but only with these three rooms. If they change name or a room is added you will have to update manually. Maybe they can be fetched as an array from the database, to make future changes easier?
+- CSS in general: Keep all the CSS files collected in the same folder, right now app.css is in the app-folder and the others in /css/.
+- CSS in general: Keep the returning stylings grouped together. As an example, h2 is in header.css and the rest of the font stylings is in app.css. It will be easier to locate if they are in the same file. 
